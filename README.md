@@ -14,7 +14,8 @@ The server repo can be found [here](https://github.com/RedMiner2005/vent-crux-ba
 - [x] Create a login system based on phone number (partially done)
 - [ ] Onboarding screen
 - [ ] Create the home page (text input + voice input)
-- [ ] Fine tune the Phi-3-mini-4k-instruct model and run it locally using llama.cpp
+- [ ] ~~Fine tune the Phi-3-mini-4k-instruct model and run it locally using llama.cpp~~
+- [x] Set up a server to manage requests to a llama-3-8b model with a predetermined set of system instructions and example prompts, using the Groq platform (vent-crux-backend)
 - [ ] Deploy vosk on device
 - [ ] Obtain contact list and filter based on registered users
 - [ ] Contact picker screen

@@ -1,10 +1,17 @@
 part of 'home_cubit.dart';
 
-sealed class HomeState extends Equatable {
-  const HomeState();
+enum HomeStatus {
+  initial
 }
 
-final class HomeInitial extends HomeState {
+class HomeState extends Equatable {
+  const HomeState._({required this.status});
+
+  const HomeState.initial() : this._(status: HomeStatus.initial);
+
+  final HomeStatus status;
+
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [status];
 }
+
