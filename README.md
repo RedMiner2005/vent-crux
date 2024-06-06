@@ -11,7 +11,7 @@ The server repo can be found [here](https://github.com/RedMiner2005/vent-crux-ba
 
 ## Roadmap
 - [x] Set up Flutter Bloc
-- [x] Create a login system based on phone number (partially done)
+- [x] Create a login system based on phone number
 - [ ] Onboarding screen
 - [ ] Create the home page (text input + voice input)
 - [ ] ~~Fine tune the Phi-3-mini-4k-instruct model and run it locally using llama.cpp~~

@@ -50,7 +50,7 @@ class LoginView extends StatelessWidget {
                             child: (state.status == LoginStatus.phone) ? PhoneLoginView(loginCubit: loginCubit,) : PhoneCodeView(loginCubit: loginCubit,),
                           ),
                         ).animate()
-                            .fade(delay: 900.ms, duration: 700.ms),
+                            .fade(delay: 900.ms, duration: 200.ms),
                       ),
                     ],
                   ),

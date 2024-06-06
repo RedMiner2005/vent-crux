@@ -25,7 +25,7 @@ class PhoneCodeView extends StatelessWidget {
             child: Text({
               CodeValidStatus.initial: "Enter the code you received",
               CodeValidStatus.valid: "",
-              CodeValidStatus.invalid: "Invalid code"
+              CodeValidStatus.invalid: "Invalid code (or internal error)"
             }[loginCubit.state.codeValidStatus]!,
               key: ValueKey<CodeValidStatus>(loginCubit.state.codeValidStatus),
             ),
@@ -34,9 +34,7 @@ class PhoneCodeView extends StatelessWidget {
         SizedBox(height: 10,),
         FloatingActionButton.extended(
           onPressed: (isValid) ? (() {
-            final authService = context.read<AuthenticationService>();
-            authService.userObject = authService.userObject.copyWith(name: "Test");
-            context.go("/");
+            loginCubit.codeSubmit();
           }) : null,
           backgroundColor: (isValid) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
           foregroundColor: (isValid) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.38),

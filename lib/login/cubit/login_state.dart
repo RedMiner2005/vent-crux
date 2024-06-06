@@ -1,8 +1,8 @@
 part of 'login_cubit.dart';
 
 enum LoginStatus {
-  loading,
   phone,
+  loading,
   code
 }
 

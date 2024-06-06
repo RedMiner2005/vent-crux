@@ -41,6 +41,8 @@ class _ColorTextState extends State<ColorText> {
             Colors.green,
             Colors.pink,
             Colors.transparent,
+            Colors.transparent,
+            Colors.transparent,
           ],
           textStyle: widget.style,
           speed: 1000.ms,

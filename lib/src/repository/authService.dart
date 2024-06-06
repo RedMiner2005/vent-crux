@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:vent/src/src.dart';
@@ -34,20 +35,27 @@ class AuthenticationService {
       return false;
     }
   }
+  
+  String _getUserId(String phone) {
+    List<int> bytes = utf8.encode(phone);
+    return sha256.convert(bytes).toString();
+  }
 
   Future<void> createUser(UserModel user) async {
-    if (!(await checkUserExists(user.id))) {
+    String hash = _getUserId(user.phone);
+    user = user.copyWith(id: hash);
+    if (!(await checkUserExists(user.id ?? hash))) {
       await _firestore
           .collection(VentConfig.usersCollection)
           .doc(user.id)
           .set({
         'createdAt': FieldValue.serverTimestamp(),
-        'name': "",
         'phone': user.phone,
         'token': _dataService.notificationToken,
         'inbox': [],
       });
     }
+    userObject = user;
   }
 
   Future<void> setNotificationToken(String userId) async {
@@ -77,19 +85,11 @@ class AuthenticationService {
     );
   }
 
-  Future<void> updateName(String name) async {
-    await _firestore
-        .collection(VentConfig.usersCollection)
-        .doc(userObject.id)
-        .update({"name": name});
-    userObject = userObject.copyWith(name: name);
-  }
-
   Stream<UserModel> get user {
     return _firebaseAuth.authStateChanges().asyncMap((firebaseUser) async {
       UserModel user = firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
       if (firebaseUser != null) {
-        setNotificationToken(user.id);
+        setNotificationToken(_getUserId(user.phone));
         createUser(user);
         user = await getUpdatedInbox(user);
       }
@@ -106,11 +106,12 @@ class AuthenticationService {
     } else {
       UserModel user = UserModel.fromJSON(jsonDecode(data));
       user = await getUpdatedInbox(user);
+      userObject = user;
       return user;
     }
   }
 
-  Future<void> logInWithPhone(
+  Future<Future<void>Function(String code, String verificationId, Function(dynamic exception) codeVerificationFailed)> logInWithPhone(
       String phone,
       Function verificationCompleted,
       Function(firebase_auth.FirebaseAuthException exception) verificationFailed,
@@ -121,8 +122,9 @@ class AuthenticationService {
         phoneNumber: phone,
         verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
           await _firebaseAuth.signInWithCredential(credential);
+          createUser(UserModel(phone: phone));
           if (_firebaseAuth.currentUser != null) {
-            setNotificationToken(_firebaseAuth.currentUser!.uid);
+            setNotificationToken(_getUserId(phone));
           }
           verificationCompleted();
         },
@@ -134,6 +136,27 @@ class AuthenticationService {
         },
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout
     );
+    return (String code, String verificationId, Function(dynamic exception) codeVerificationFailed) => _codeAttempt(phone, code, verificationId, verificationCompleted, codeVerificationFailed);
+  }
+
+  Future<void> _codeAttempt(
+      String phone,
+      String code,
+      String verificationId,
+      Function verificationCompleted,
+      Function(dynamic exception) verificationFailed,
+  ) async {
+    try {
+      final credential = firebase_auth.PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code);
+      await _firebaseAuth.signInWithCredential(credential);
+      createUser(UserModel(phone: phone));
+      if (_firebaseAuth.currentUser != null) {
+        setNotificationToken(_getUserId(phone));
+      }
+      verificationCompleted();
+    } catch (e) {
+      verificationFailed(e);
+    }
   }
 
   Future<void> logOut(Function(dynamic exception) logOutFailure) async {
@@ -152,6 +175,6 @@ class AuthenticationService {
 extension on firebase_auth.User {
   /// Maps a [firebase_auth.User] into a [UserModel].
   UserModel get toUserModel {
-    return UserModel(id: uid, phone: phoneNumber, name: displayName);
+    return UserModel(id: uid, phone: phoneNumber ?? "");
   }
 }

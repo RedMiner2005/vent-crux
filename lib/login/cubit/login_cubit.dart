@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vent/app/app.dart';
 import 'package:vent/src/repository/authService.dart';
 
 part 'login_state.dart';
@@ -9,20 +13,44 @@ class LoginCubit extends Cubit<LoginState> {
 
   final AuthenticationService _authService;
   String _phone = "";
+  String _code = "";
+  String _verificationId = "";
+  late Function(String code, String verificationId, Function(dynamic exception) codeVerificationFailed) authCodeSubmit;
 
-  void phoneNumberSubmit() {
-    // _authService.logInWithPhone(
-    //   _phone,
-    //   () {},
-    //   (exception) => null,
-    //   (phone, verificationId, forceResendingToken) => null,
-    //   (verificationId) => null
-    // );
+  void phoneNumberSubmit(Function goHome) async {
+    authCodeSubmit = await _authService.logInWithPhone(
+      _phone,
+      () {
+        log("Successful login");
+        ventRouter.go("/");
+      },
+      (exception) {
+        Fluttertoast.showToast(msg: "Could not login");
+        log("Phone login failed: $exception");
+        emit(LoginState.phone());
+      },
+      (phone, verificationId, forceResendingToken) {
+        _verificationId = verificationId;
+        Fluttertoast.showToast(msg: "Code sent");
+      },
+      (verificationId) {
+        _verificationId = verificationId;
+        Fluttertoast.showToast(msg: "Auto verification timed out");
+      }
+    );
     emit(LoginState.code());
   }
 
+  void codeSubmit() {
+    authCodeSubmit(_code, _verificationId, (exception) {
+      log("Code verification failed: $exception");
+      emit(state.copyWith(codeValidStatus: CodeValidStatus.invalid));
+      Fluttertoast.showToast(msg: "Code verification failed");
+    });
+  }
+
   void validatePhoneText(String phone) {
-    RegExp phoneRegex = RegExp(r'^(?:[+0]9)?[0-9]{10}$');
+    RegExp phoneRegex = RegExp(r'^\+[1-9]{1}[0-9]{3,14}$');
     if (phone == "") {
       emit(state.copyWith(phoneValidStatus: PhoneValidStatus.initial));
     } else if (phoneRegex.hasMatch(phone)) {
@@ -34,9 +62,13 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void validateCodeText(String code) {
-    if (code == "") {
+    if (state.codeValidStatus == CodeValidStatus.invalid) {
+      emit(state.copyWith(codeValidStatus: CodeValidStatus.valid));
+    }
+    if (code == "" || code.length != 6) {
       emit(state.copyWith(codeValidStatus: CodeValidStatus.initial));
     } else {
+      _code = code;
       emit(state.copyWith(codeValidStatus: CodeValidStatus.valid));
     }
   }

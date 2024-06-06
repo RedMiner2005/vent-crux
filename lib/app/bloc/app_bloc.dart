@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:vent/app/app.dart';
 import 'package:vent/src/src.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -29,6 +30,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _onInit(AppInitial event, Emitter<AppState> emit) async {
     final userModel = await _authService.currentUser;
+    if (userModel.isEmpty) {
+      ventRouter.go("/login");
+    }
     emit(
       userModel.isNotEmpty
           ? AppState.authenticated(userModel)
@@ -37,6 +41,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _onUserChanged(_AppUserChanged event, Emitter<AppState> emit) {
+    if (event.userModel.isEmpty) {
+      ventRouter.go("/login");
+    }
     emit(
       event.userModel.isNotEmpty
           ? AppState.authenticated(event.userModel)
@@ -45,6 +52,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {
+    ventRouter.go("/login");
     unawaited(_authService.logOut((exception) {
       log("Logout failed with exception: $exception");
       Fluttertoast.showToast(msg: "Logout failed");
