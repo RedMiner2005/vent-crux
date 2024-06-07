@@ -25,24 +25,15 @@ class PhoneCodeView extends StatelessWidget {
             child: Text({
               CodeValidStatus.initial: "Enter the code you received",
               CodeValidStatus.valid: "",
-              CodeValidStatus.invalid: "Invalid code (or internal error)"
+              CodeValidStatus.invalid: "Invalid code (or internal error)",
+              CodeValidStatus.verified: "Alright, you're good to go!"
             }[loginCubit.state.codeValidStatus]!,
               key: ValueKey<CodeValidStatus>(loginCubit.state.codeValidStatus),
             ),
           ),
         ),
         SizedBox(height: 10,),
-        FloatingActionButton.extended(
-          onPressed: (isValid) ? (() {
-            loginCubit.codeSubmit();
-          }) : null,
-          backgroundColor: (isValid) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
-          foregroundColor: (isValid) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
-          icon: Text("Verify"),
-          label: Icon(Icons.done_rounded),
-          elevation: 4.0,
-          disabledElevation: 0.0,
-        )
+        LoginSubmitButton(loginCubit: loginCubit,),
       ],
     );
   }

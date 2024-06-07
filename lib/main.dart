@@ -5,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/firebase_options.dart';
-import 'package:vent/src/repository/authService.dart';
-import 'package:vent/src/repository/dataService.dart';
-import 'package:vent/src/repository/notificationService.dart';
+import 'package:vent/src/repository/repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,11 +20,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final CacheManager cacheManager = DefaultCacheManager();
-  final DataService dataService = DataService(cache: cacheManager);
+  final cacheManager = DefaultCacheManager();
+  final dataService = DataService(cache: cacheManager);
+  final voiceService = VoiceService();
+  final backendService = BackendService();
   final notificationService = NotificationService(dataService);
   final authService = AuthenticationService(dataService: dataService);
-  final app = App(authService: authService,);
+  final app = App(authService: authService, notificationService: notificationService, backendService: backendService, voiceService: voiceService, dataService: dataService,);
   notificationService.init((message) {
     runApp(app);
   });

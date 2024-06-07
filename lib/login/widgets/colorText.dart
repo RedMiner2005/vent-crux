@@ -34,12 +34,12 @@ class _ColorTextState extends State<ColorText> {
           widget.text,
           colors: [
             (Theme.of(context).brightness == Brightness.light) ? Colors.black87 : Colors.white,
-            Colors.purple,
             Colors.indigo,
             Colors.blue,
             Colors.teal,
             Colors.green,
             Colors.pink,
+            Colors.purple,
             Colors.transparent,
             Colors.transparent,
             Colors.transparent,

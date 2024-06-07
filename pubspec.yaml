@@ -44,7 +44,7 @@ dependencies:
   firebase_core: ^2.24.2
   flutter_launcher_icons: ^0.13.1
   fluttertoast: ^8.2.4
-  google_fonts: ^6.2.1
+  google_fonts: ^4.0.0
   firebase_messaging: ^14.8.0
   flutter_animate: ^4.5.0
   flutter_local_notifications: ^17.1.2
@@ -53,6 +53,12 @@ dependencies:
   rainbow_color: ^2.0.1
   animations: ^2.0.11
   crypto: ^3.0.3
+  http:
+  vosk_flutter: ^0.3.48
+  record: ^5.0.0
+  record_android: 1.2.1
+  speech_to_text: ^6.6.2
+  flutter_contacts: ^1.1.8
 
 dev_dependencies:
   flutter_test:
@@ -84,7 +90,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   #  assets:
-  #    - assets/icon/VentLogo.png
+  #    - assets/speech/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -108,6 +114,9 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+  fonts:
+   - family: Redressed
+     fonts:
+       - asset: assets/fonts/Redressed-Regular.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

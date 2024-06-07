@@ -31,10 +31,9 @@ class LoginView extends StatelessWidget {
                           padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
                           child: ColorText(
                             "Vent",
-                            style: GoogleFonts.redressed(
-                                textStyle: TextStyle(
-                                  fontSize: 72.0,
-                                )
+                            style: TextStyle(
+                              fontSize: 72.0,
+                              fontFamily: 'Redressed'
                             ),
                           )
                       ),

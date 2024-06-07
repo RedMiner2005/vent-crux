@@ -18,9 +18,11 @@ class LoginCubit extends Cubit<LoginState> {
   late Function(String code, String verificationId, Function(dynamic exception) codeVerificationFailed) authCodeSubmit;
 
   void phoneNumberSubmit(Function goHome) async {
+    emit(state.copyWith(isLoading: true));
     authCodeSubmit = await _authService.logInWithPhone(
       _phone,
       () {
+        emit(state.copyWith(codeValidStatus: CodeValidStatus.verified));
         log("Successful login");
         ventRouter.go("/");
       },
@@ -32,13 +34,13 @@ class LoginCubit extends Cubit<LoginState> {
       (phone, verificationId, forceResendingToken) {
         _verificationId = verificationId;
         Fluttertoast.showToast(msg: "Code sent");
+        emit(LoginState.code());
       },
       (verificationId) {
         _verificationId = verificationId;
         Fluttertoast.showToast(msg: "Auto verification timed out");
       }
     );
-    emit(LoginState.code());
   }
 
   void codeSubmit() {

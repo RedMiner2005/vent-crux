@@ -37,6 +37,7 @@ class NotificationService {
       provisional: false,
       sound: true,
     );
+    AndroidInitializationSettings('ic_stat_name');
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
@@ -65,11 +66,5 @@ class NotificationService {
     });
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageTapped);
     http.get(Uri.parse(VentConfig.backendURL)).then((value) => print("Connected to: " + value.body));
-  }
-
-  Future<Map<String, dynamic>> sendNotification(String toUserId, String roomId) async {
-    final result = jsonDecode((await http.get(Uri.parse('${VentConfig.backendURL}/send/$toUserId/$roomId'))).body);
-    print(result);
-    return result;
   }
 }

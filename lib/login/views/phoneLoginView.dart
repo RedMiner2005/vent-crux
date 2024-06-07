@@ -36,15 +36,7 @@ class PhoneLoginView extends StatelessWidget {
           ),
         ),
         SizedBox(height: 10,),
-        FloatingActionButton.extended(
-          onPressed: (isValid) ? (() => loginCubit.phoneNumberSubmit(() => GoRouter.of(context).go('/'))) : null,
-          backgroundColor: (isValid) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
-          foregroundColor: (isValid) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
-          icon: Text("Next"),
-          label: Icon(Icons.navigate_next_rounded),
-          elevation: 4.0,
-          disabledElevation: 0.0,
-        )
+        LoginSubmitButton(loginCubit: loginCubit,),
       ],
     );
   }

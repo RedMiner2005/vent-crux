@@ -7,7 +7,10 @@ class VentConfig {
   static const userCacheKey = "__user_cache_key__";
   static const runOnceCacheKey = "__run_once_cache_key__";
   static const backendURL = "https://vent-crux-backend.onrender.com";
-  static const brandingColor = const Color(0xFFAB2DFF);
+  static const brandingColor = const Color(0x1A6BFF);
+
+  // static const voskModelPath = 'assets/speech/vosk-model-small-en-us-0.15.zip';
+  // static const voskSampleRate = 16000;
 }
 
 Map<Brightness, ThemeData> themeBuilder() {

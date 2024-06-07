@@ -10,6 +10,10 @@ import 'package:vent/src/src.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 
+String _getUserId(String phone) {
+  List<int> bytes = utf8.encode(phone);
+  return sha256.convert(bytes).toString();
+}
 
 class AuthenticationService {
   AuthenticationService({
@@ -35,11 +39,6 @@ class AuthenticationService {
       return false;
     }
   }
-  
-  String _getUserId(String phone) {
-    List<int> bytes = utf8.encode(phone);
-    return sha256.convert(bytes).toString();
-  }
 
   Future<void> createUser(UserModel user) async {
     String hash = _getUserId(user.phone);
@@ -51,7 +50,7 @@ class AuthenticationService {
           .set({
         'createdAt': FieldValue.serverTimestamp(),
         'phone': user.phone,
-        'token': _dataService.notificationToken,
+        'notification_token': _dataService.notificationToken,
         'inbox': [],
       });
     }
@@ -59,12 +58,21 @@ class AuthenticationService {
   }
 
   Future<void> setNotificationToken(String userId) async {
-    await _firestore
-        .collection(VentConfig.usersCollection)
-        .doc(userId)
-        .update({
-      "notification_token": _dataService.notificationToken
-    });
+    try {
+      await _firestore
+          .collection(VentConfig.usersCollection)
+          .doc(userId)
+          .update({
+        "notification_token": _dataService.notificationToken
+      });
+    } catch (e) {
+      await _firestore
+          .collection(VentConfig.usersCollection)
+          .doc(userId)
+          .set({
+        "notification_token": _dataService.notificationToken
+      });
+    }
   }
 
   Future<void> removeNotificationToken(String userId) async {
@@ -110,6 +118,34 @@ class AuthenticationService {
       return user;
     }
   }
+  
+  Stream<int> get unreadCount {
+    return _firestore.collection(VentConfig.usersCollection)
+        .doc(userObject.id)
+        .snapshots()
+        .asyncMap((event) => (event.data()?["unreadCount"] ?? 0) as int);
+  }
+
+  Stream<List<Map<String, dynamic>>> get inbox {
+    return _firestore.collection(VentConfig.usersCollection)
+        .doc(userObject.id)
+        .snapshots()
+        .asyncMap((event) {
+          List<Map<String, dynamic>> inbox = event.data()?["inbox"] ?? [];
+          return inbox.map(
+                  (e) => {"message": e["message"], "time": DateTime.fromMillisecondsSinceEpoch(int.parse(utf8.fuse(base64).decode(e["time"])) * 1000)}
+          ) as List<Map<String, dynamic>>;
+        });
+  }
+
+  Future<void> clearUnread() async {
+    await _firestore
+        .collection(VentConfig.usersCollection)
+        .doc(userObject.id)
+        .update({
+      "unreadCount": 0
+    });
+  }
 
   Future<Future<void>Function(String code, String verificationId, Function(dynamic exception) codeVerificationFailed)> logInWithPhone(
       String phone,
@@ -122,11 +158,12 @@ class AuthenticationService {
         phoneNumber: phone,
         verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
           await _firebaseAuth.signInWithCredential(credential);
-          createUser(UserModel(phone: phone));
-          if (_firebaseAuth.currentUser != null) {
-            setNotificationToken(_getUserId(phone));
-          }
-          verificationCompleted();
+          createUser(UserModel(phone: phone)).then((_) {
+            if (_firebaseAuth.currentUser != null) {
+              setNotificationToken(_getUserId(phone));
+            }
+            verificationCompleted();
+          });
         },
         verificationFailed: (firebase_auth.FirebaseAuthException exception) {
           verificationFailed(exception);
@@ -175,6 +212,6 @@ class AuthenticationService {
 extension on firebase_auth.User {
   /// Maps a [firebase_auth.User] into a [UserModel].
   UserModel get toUserModel {
-    return UserModel(id: uid, phone: phoneNumber ?? "");
+    return UserModel(id: _getUserId(phoneNumber ?? ""), phone: phoneNumber ?? "");
   }
 }

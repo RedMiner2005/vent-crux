@@ -15,11 +15,12 @@ enum PhoneValidStatus {
 enum CodeValidStatus {
   initial,
   invalid,
-  valid
+  valid,
+  verified
 }
 
 final class LoginState extends Equatable {
-  const LoginState._({required this.status, required this.phoneValidStatus, required this.codeValidStatus});
+  const LoginState._({required this.status, required this.phoneValidStatus, required this.codeValidStatus, this.isLoading=false});
 
   const LoginState.loading() : this._(status: LoginStatus.loading, phoneValidStatus: PhoneValidStatus.initial, codeValidStatus: CodeValidStatus.initial);
   const LoginState.phone({PhoneValidStatus? validStatus}) : this._(status: LoginStatus.phone, phoneValidStatus: validStatus ?? PhoneValidStatus.initial, codeValidStatus: CodeValidStatus.initial);
@@ -32,12 +33,14 @@ final class LoginState extends Equatable {
   final LoginStatus status;
   final PhoneValidStatus phoneValidStatus;
   final CodeValidStatus codeValidStatus;
+  final bool isLoading;
 
-  LoginState copyWith({LoginStatus? status, PhoneValidStatus? phoneValidStatus, CodeValidStatus? codeValidStatus}) {
+  LoginState copyWith({LoginStatus? status, PhoneValidStatus? phoneValidStatus, CodeValidStatus? codeValidStatus, bool? isLoading}) {
     return LoginState._(
         status: status ?? this.status,
         phoneValidStatus: phoneValidStatus ?? this.phoneValidStatus,
-        codeValidStatus: codeValidStatus ?? this.codeValidStatus
+        codeValidStatus: codeValidStatus ?? this.codeValidStatus,
+        isLoading: isLoading ?? this.isLoading,
     );
   }
 }
