@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vent/app/app.dart';
 import 'package:vent/src/repository/contactService.dart';
 import 'package:vent/src/repository/repository.dart';
 
@@ -21,10 +23,21 @@ class HomeCubit extends Cubit<HomeState> {
   final ContactService _contactService;
   final TextEditingController _controller;
 
-  Future<void> send() async {
-    final result = await _backendService.process(_controller.text);
-    log(result.toString());
-    log((await _contactService.findMatches(result["contact"])).toString());
-    // Future.delayed(const Duration(seconds: 2), () => _backendService.send("+911234512345", result["toSend"]));
+  Future<Map<String, dynamic>> process() async {
+    try {
+      final result = await _backendService.process(_controller.text);
+      // final Map<String, dynamic> result = {"toSend":"", "contact":null, "isValid":true};
+      log(result.toString());
+      final matches = await _contactService.findMatches(result["contact"]);
+      return {"result": result, "matches": matches};
+    } catch (e) {
+      log("Processing issue: ${e.toString()}");
+      Fluttertoast.showToast(msg: "Could not process your request. Try again.");
+      return {};
+    }
+  }
+
+  Future<void> send(Map<String, dynamic> processData, String chosenHash) async {
+    _backendService.send(chosenHash, processData["result"]["toSend"]);
   }
 }

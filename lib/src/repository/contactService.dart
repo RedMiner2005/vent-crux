@@ -65,16 +65,8 @@ class ContactService {
     if (await FlutterContacts.requestPermission(readonly: true)) {
       (await FlutterContacts.getContacts(withProperties: true)).forEach((Contact contact) {
         contact.phones.forEach((phone) async {
-          // final existsCache = await _dataService.checkContactCache(phone.normalizedNumber, contact.displayName);
-          // log(existsCache.toString());
-          // if (!existsCache) {
-          //   final status = await checkIfRegistered(phone.normalizedNumber);
-          //   _dataService.saveContactToCache(phone.normalizedNumber, contact.displayName, status);
-          //   log(phone.normalizedNumber + " " + contact.displayName);
-          // }
           final status = await checkIfRegistered(phone.normalizedNumber);
           _dataService.saveContactToCache(phone.normalizedNumber, contact.displayName, status);
-          // log(phone.normalizedNumber + " / " + contact.displayName + " = " + status.toString());
         });
       });
     }
@@ -84,12 +76,12 @@ class ContactService {
   Future<List<Map<String, dynamic>>> findMatches(String? name) async {
     if (name == null) {
       return (await _dataService.getContactCache())
-          .map((key, value) => MapEntry(key, {"confidence": 100, "name": value, "hash": key}))
+          .map((key, value) => MapEntry(key, {"confidence": 100, "name": value, "hash": ContactService.getPhoneHash(key), "phone": key}))
           .values.toList();
     }
     List<Map<String, dynamic>> matches =
         (await _dataService.getContactCache())
-          .map((key, value) => MapEntry(key, {"confidence": tokenSetPartialRatio(name, value), "name": value, "hash": key}))
+          .map((key, value) => MapEntry(key, {"confidence": tokenSetPartialRatio(name, value), "name": value, "hash": ContactService.getPhoneHash(key), "phone": key}))
           .values.toList();
     matches.sort((a, b) => b["confidence"].compareTo(a["confidence"]));
     matches.removeWhere((element) => element["confidence"] < 85);

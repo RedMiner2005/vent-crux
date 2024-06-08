@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vent/src/config.dart';
 import 'package:vent/src/repository/authService.dart';
 
 class NotificationsButton extends StatelessWidget {
-  const NotificationsButton({super.key});
+  const NotificationsButton({super.key, required this.pageController});
+
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,10 @@ class NotificationsButton extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              authService.clearUnread();
+              pageController.nextPage(
+                duration: VentConfig.ANIMATION_PAGE_SWIPE_DURATION,
+                curve: Curves.easeOut,
+              );
             },
           );
           return (unread.data == 0 || unread.data == null) ? button : Badge(

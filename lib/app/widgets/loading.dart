@@ -7,10 +7,15 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SpinKitThreeBounce(
-        color: VentConfig.brandingColor,
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: SpinKitThreeBounce(
+            color: VentConfig.brandingColor,
+          ),
+        ),
+      ],
     );
   }
 }

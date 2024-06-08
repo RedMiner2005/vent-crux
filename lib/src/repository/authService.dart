@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -130,10 +131,29 @@ class AuthenticationService {
         .doc(userObject.id)
         .snapshots()
         .asyncMap((event) {
-          List<Map<String, dynamic>> inbox = event.data()?["inbox"] ?? [];
-          return inbox.map(
-                  (e) => {"message": e["message"], "time": DateTime.fromMillisecondsSinceEpoch(int.parse(utf8.fuse(base64).decode(e["time"])) * 1000)}
-          ) as List<Map<String, dynamic>>;
+          if (event.data() != null) {
+            List<Map<String, dynamic>> inboxList = (event.data()!["inbox"] as List<dynamic>).map((e) {
+              late DateTime time;
+              try {
+                time = DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(utf8.fuse(base64).decode(e["time"]))
+                );
+              } catch (_) {
+                time = DateTime.fromMillisecondsSinceEpoch(0);
+              }
+              return {
+                "message": e["message"],
+                "time": time,
+              };
+            }).toList().reversed.toList();
+            final int unread = event.data()!["unreadCount"] ?? 0;
+            for (final (index, item) in inboxList.indexed) {
+              inboxList[index]["unread"] = index < unread;
+            }
+            return inboxList;
+          } else {
+            return [];
+          }
         });
   }
 

@@ -39,14 +39,10 @@ class DataService {
 
   Future<bool> checkContactCache(String phone, String name) async {
     final regFile = await _cache.getFileFromCache(VentConfig.registeredContactCacheKey);
-    // final unregFile = await _cache.getFileFromCache(VentConfig.unregisteredContactCacheKey);
     final hash = ContactService.getPhoneHash(phone);
     if (regFile != null) {
       final regData = jsonDecode(await regFile.file.readAsString()) as Map<String, dynamic>;
       return regData.containsKey(hash) && regData[hash] == name;
-    // } else if (unregFile != null) {
-    //   final unregData = jsonDecode(await unregFile.file.readAsString()) as Map<String, dynamic>;
-    //   return unregData.containsKey(hash) && unregData[hash] == name;
     } else {
       return false;
     }
@@ -63,7 +59,6 @@ class DataService {
   }
 
   Future<File?> saveContactToCache(String phone, String name, ContactStatus status) async {
-    // final key = (status == ContactStatus.registered) ? VentConfig.registeredContactCacheKey : VentConfig.unregisteredContactCacheKey;
     final key = VentConfig.registeredContactCacheKey;
     if (status == ContactStatus.unregistered) {
       return null;
@@ -74,13 +69,13 @@ class DataService {
     if (fileInfo != null) {
       content = jsonDecode(await fileInfo.file.readAsString()) as Map<String, dynamic>;
     }
-    content[ContactService.getPhoneHash(phone)] = name;
+    content[phone] = name;
+    // content[ContactService.getPhoneHash(phone)] = name;
     return _cache.putFile(key, Uint8List.fromList(utf8.encode(jsonEncode(content))));
   }
 
-  Future<File?> clearContactCache() async {
-    // final key = (status == ContactStatus.registered) ? VentConfig.registeredContactCacheKey : VentConfig.unregisteredContactCacheKey;
+  Future<void> clearContactCache() async {
     final key = VentConfig.registeredContactCacheKey;
-    return _cache.putFile(key, Uint8List.fromList(utf8.encode(jsonEncode({}))));
+    _cache.removeFile(key);
   }
 }

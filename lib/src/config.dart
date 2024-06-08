@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class VentConfig {
   static const usersCollection = "users";
@@ -12,6 +13,15 @@ class VentConfig {
   static const brandingColor = const Color(0x1A6BFF);
 
   static const defaultCountryCode = 91;
+
+  static final DateFormat dateFormat = DateFormat("dd MMM yyyy");
+  static final DateFormat weekdayFormat = DateFormat("EEEE");
+  static final DateFormat timeFormat = DateFormat.jm();
+
+  // Animations
+  static const Duration ANIMATION_DURATION = Duration(milliseconds: 375);
+  static const Duration ANIMATION_PAGE_SWIPE_DURATION = Duration(milliseconds: 250);
+  static const double ANIMATION_SLIDE_OFFSET = 20.0;
 
   // static const voskModelPath = 'assets/speech/vosk-model-small-en-us-0.15.zip';
   // static const voskSampleRate = 16000;

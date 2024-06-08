@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/home/cubit/home_cubit.dart';
+import 'package:vent/home/home.dart';
+import 'package:vent/home/views/notificationsPage.dart';
 import 'package:vent/home/widgets/widgets.dart';
 import 'package:vent/src/repository/authService.dart';
 import 'package:vent/src/repository/backendService.dart';
@@ -18,91 +20,43 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late TextEditingController controller;
+  late TextEditingController textController;
+  late PageController pageController;
   late FocusNode focusNode;
   late VoiceService _voiceService;
   bool isRecording = false;
-  bool initOnce = false;
+  int _page = 0;
 
   @override
   Widget build(BuildContext context) {
     _voiceService = context.read<VoiceService>();
-    // _voiceService?.init(
-    //   () => null,
-    //   (append) {
-    //     controller.text += append;
-    //   },
-    //   (e) {
-    //     Fluttertoast.showToast(msg: "Recording error");
-    //     log("Recording error: ${e.toString()}");
-    //     setState(() {
-    //       isRecording = false;
-    //     });
-    //   },
-    //   (duration) => null
-    // );
+    final _authService = context.read<AuthenticationService>();
+    final _backendService = context.read<BackendService>();
+    final _contactService = context.read<ContactService>();
     return BlocProvider(
       create: (context) => HomeCubit(
-          backendService: context.read<BackendService>(),
-          voiceService: context.read<VoiceService>(),
-          contactService: context.read<ContactService>(),
-          controller: controller
+          backendService: _backendService,
+          voiceService: _voiceService,
+          contactService: _contactService,
+          controller: textController
       ),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           final cubit = context.read<HomeCubit>();
-          return Scaffold(
-            appBar: AppBar(
-              title: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Container(),
-              ),
-              actions: <Widget>[
-                NotificationsButton(),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'Logout':
-                        context.read<AppBloc>().add(AppLogoutRequested());
-                        break;
-                      case 'About':
-                        showAboutDialog(context: context);
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return {'About', 'Logout'}.map((String choice) {
-                      return PopupMenuItem<String>(
-                        value: choice,
-                        child: Text(choice),
-                      );
-                    }).toList();
-                  },
-                ),
-              ],
-            ),
-            body: Container(
-              child: Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                      ),
-                    ),
-                    Spacer(),
-                    VoiceButton(voiceService: _voiceService, controller: controller),
-                    ElevatedButton(
-                        onPressed: cubit.send,
-                        child: Text("Process")
-                    ),
-                    Spacer()
-                  ],
-                ),
-              ),
-            ),
+          return PageView(
+            children: [
+              HomePage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,),
+              NotificationsPage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,),
+            ],
+            scrollDirection: Axis.horizontal,
+            physics: BouncingScrollPhysics(),
+            controller: pageController,
+            onPageChanged: (num) => setState(() {
+              if(_page == 1 && num == 0) {
+                _authService.clearUnread();
+              }
+              _page = num;
+            }),
           );
         },
       ),
@@ -111,15 +65,17 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    controller = TextEditingController();
+    textController = TextEditingController();
+    pageController = PageController();
     focusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    textController.dispose();
     focusNode.dispose();
+    pageController.dispose();
     _voiceService.dispose();
     super.dispose();
   }
