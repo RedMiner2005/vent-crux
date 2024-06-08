@@ -59,6 +59,8 @@ dependencies:
   record_android: 1.2.1
   speech_to_text: ^6.6.2
   flutter_contacts: ^1.1.8
+  flutter_libphonenumber: ^2.2.3
+  fuzzywuzzy: ^1.1.6
 
 dev_dependencies:
   flutter_test:

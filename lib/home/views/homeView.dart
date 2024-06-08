@@ -45,6 +45,7 @@ class _HomeViewState extends State<HomeView> {
       create: (context) => HomeCubit(
           backendService: context.read<BackendService>(),
           voiceService: context.read<VoiceService>(),
+          contactService: context.read<ContactService>(),
           controller: controller
       ),
       child: BlocBuilder<HomeCubit, HomeState>(

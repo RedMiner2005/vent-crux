@@ -12,17 +12,20 @@ class App extends StatelessWidget {
     required NotificationService notificationService,
     required BackendService backendService,
     required DataService dataService,
+    required ContactService contactService,
     required VoiceService voiceService,
     super.key,
   }) : _authService = authService,
         _dataService = dataService,
         _backendService = backendService,
+        _contactService = contactService,
         _voiceService = voiceService,
         _notificationService = notificationService;
 
   final AuthenticationService _authService;
   final NotificationService _notificationService;
   final BackendService _backendService;
+  final ContactService _contactService;
   final DataService _dataService;
   final VoiceService _voiceService;
 
@@ -33,6 +36,7 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: _authService),
         RepositoryProvider.value(value: _notificationService),
         RepositoryProvider.value(value: _backendService),
+        RepositoryProvider.value(value: _contactService),
         RepositoryProvider.value(value: _dataService),
         RepositoryProvider.value(value: _voiceService),
       ],

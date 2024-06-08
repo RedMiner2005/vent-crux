@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/src/repository/authService.dart';
+import 'package:vent/src/repository/repository.dart';
 
 part 'login_state.dart';
 
@@ -20,7 +21,7 @@ class LoginCubit extends Cubit<LoginState> {
   void phoneNumberSubmit(Function goHome) async {
     emit(state.copyWith(isLoading: true));
     authCodeSubmit = await _authService.logInWithPhone(
-      _phone,
+        (await ContactService.get_e164(_phone)) ?? _phone,
       () {
         emit(state.copyWith(codeValidStatus: CodeValidStatus.verified));
         log("Successful login");

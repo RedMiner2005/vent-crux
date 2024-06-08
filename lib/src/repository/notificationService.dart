@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:vent/src/src.dart';
 
 class NotificationService {
-  NotificationService(DataService? dataService):
+  NotificationService({required DataService? dataService}):
           _dataService = dataService ?? DataService();
 
   final DataService _dataService;
@@ -58,13 +58,14 @@ class NotificationService {
               android: AndroidNotificationDetails(
                 channel.id,
                 channel.name,
-                icon: android.smallIcon,
-                // other properties...
+                icon: "ic_stat_name",
+                priority: Priority.max,
+                importance: Importance.max,
+                enableVibration: true
               ),
             ));
       }
     });
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageTapped);
-    http.get(Uri.parse(VentConfig.backendURL)).then((value) => print("Connected to: " + value.body));
   }
 }

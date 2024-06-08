@@ -24,9 +24,17 @@ Future<void> main() async {
   final dataService = DataService(cache: cacheManager);
   final voiceService = VoiceService();
   final backendService = BackendService();
-  final notificationService = NotificationService(dataService);
+  final contactService = ContactService(dataService: dataService);
+  final notificationService = NotificationService(dataService: dataService);
   final authService = AuthenticationService(dataService: dataService);
-  final app = App(authService: authService, notificationService: notificationService, backendService: backendService, voiceService: voiceService, dataService: dataService,);
+  final app = App(
+    authService: authService,
+    notificationService: notificationService,
+    backendService: backendService,
+    contactService: contactService,
+    voiceService: voiceService,
+    dataService: dataService,
+  );
   notificationService.init((message) {
     runApp(app);
   });

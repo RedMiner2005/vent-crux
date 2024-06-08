@@ -11,8 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 
 String _getUserId(String phone) {
-  List<int> bytes = utf8.encode(phone);
-  return sha256.convert(bytes).toString();
+  return ContactService.getPhoneHash(phone);
 }
 
 class AuthenticationService {
@@ -199,7 +198,7 @@ class AuthenticationService {
   Future<void> logOut(Function(dynamic exception) logOutFailure) async {
     try {
       await Future.wait([
-        removeNotificationToken(_firebaseAuth.currentUser!.uid),
+        removeNotificationToken(ContactService.getPhoneHash(userObject.phone)),
         _firebaseAuth.signOut(),
         _dataService.saveUserCache(UserModel.empty),
       ]);

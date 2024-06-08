@@ -12,7 +12,6 @@ class BackendService {
   }
 
   Future<Map<String, dynamic>> process(String input) async {
-    log("HELLOOO $input");
     var response = await http.post(Uri.parse('${VentConfig.backendURL}/process'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({

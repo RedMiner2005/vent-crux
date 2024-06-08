@@ -6,8 +6,12 @@ class VentConfig {
   static const usersCollection = "users";
   static const userCacheKey = "__user_cache_key__";
   static const runOnceCacheKey = "__run_once_cache_key__";
+  static const registeredContactCacheKey = "__registered_contact_cache_key__";
+  static const unregisteredContactCacheKey = "__unregistered_contact_cache_key__";
   static const backendURL = "https://vent-crux-backend.onrender.com";
   static const brandingColor = const Color(0x1A6BFF);
+
+  static const defaultCountryCode = 91;
 
   // static const voskModelPath = 'assets/speech/vosk-model-small-en-us-0.15.zip';
   // static const voskSampleRate = 16000;
