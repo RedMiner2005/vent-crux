@@ -26,11 +26,13 @@ class HomeCubit extends Cubit<HomeState> {
   Future<Map<String, dynamic>> process() async {
     try {
       final result = await _backendService.process(_controller.text);
-      // final Map<String, dynamic> result = {"toSend":"", "contact":null, "isValid":true};
       log(result.toString());
       final matches = await _contactService.findMatches(result["contact"]);
       return {"result": result, "matches": matches};
     } catch (e) {
+      if (e is FormatException) {
+        _contactService.sync();
+      }
       log("Processing issue: ${e.toString()}");
       Fluttertoast.showToast(msg: "Could not process your request. Try again.");
       return {};

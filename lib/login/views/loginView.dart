@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,7 @@ class LoginView extends StatelessWidget {
               resizeToAvoidBottomInset: false,
               appBar: AppBar(),
               body: (state.status == LoginStatus.loading) ? LoadingWidget() : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
                 child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,26 +37,48 @@ class LoginView extends StatelessWidget {
                               fontSize: 72.0,
                               fontFamily: 'Redressed'
                             ),
-                          )
+                          ).animate().fade(delay: 200.ms)
                       ),
                       Text("Login", style: TextStyle(fontSize: 20.0),).animate()
-                          .fade(delay: 300.ms, duration: 700.ms),
+                          .fade(delay: 500.ms, duration: 700.ms),
                       SizedBox(height: 30,),
                       Padding(
                         padding: const EdgeInsets.all(32.0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(32.0),
-                            child: (state.status == LoginStatus.phone) ? PhoneLoginView(loginCubit: loginCubit,) : PhoneCodeView(loginCubit: loginCubit,),
+                        child: PageTransitionSwitcher(
+                          reverse: state.status == LoginStatus.phone,
+                          transitionBuilder: (
+                              Widget child,
+                              Animation<double> animation,
+                              Animation<double> secondaryAnimation,
+                              ) {
+                            return SharedAxisTransition(
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: SharedAxisTransitionType.horizontal,
+                              child: child,
+                            );
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(32.0),
+                              child: {
+                                LoginStatus.loading: LoadingWidget(),
+                                LoginStatus.phone: PhoneLoginView(loginCubit: loginCubit,),
+                                LoginStatus.code: PhoneCodeView(loginCubit: loginCubit,)
+                              }[state.status]
+                            ),
+                            key: ValueKey<LoginStatus>(state.status),
                           ),
                         ).animate()
-                            .fade(delay: 900.ms, duration: 200.ms),
+                            .fade(delay: 1500.ms, duration: 400.ms, curve: Curves.easeOut)
+                            .slideY(delay: 1500.ms, duration: 400.ms, begin: 0.1, end: 0.0, curve: Curves.easeOut),
                       ),
+                      SizedBox(height: 100,),
                     ],
                   ),
                 ),
-              ),
+              ).animate(),
             );
           },
         ),

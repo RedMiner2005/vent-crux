@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:vent/src/repository/contactService.dart';
 import 'package:vent/src/src.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
@@ -121,14 +122,18 @@ class AuthenticationService {
   
   Stream<int> get unreadCount {
     return _firestore.collection(VentConfig.usersCollection)
-        .doc(userObject.id)
+        .doc(ContactService.getPhoneHash(userObject.phone))
         .snapshots()
-        .asyncMap((event) => (event.data()?["unreadCount"] ?? 0) as int);
+        .asyncMap((event) => (event.data()?["unreadCount"] ?? 0) as int)
+        .handleError((e) {
+          log("Unread Count error: ${e.toString()}");
+          return 0;
+    });
   }
 
   Stream<List<Map<String, dynamic>>> get inbox {
     return _firestore.collection(VentConfig.usersCollection)
-        .doc(userObject.id)
+        .doc(ContactService.getPhoneHash(userObject.phone))
         .snapshots()
         .asyncMap((event) {
           if (event.data() != null) {
@@ -169,10 +174,14 @@ class AuthenticationService {
   Future<Future<void>Function(String code, String verificationId, Function(dynamic exception) codeVerificationFailed)> logInWithPhone(
       String phone,
       Function verificationCompleted,
-      Function(firebase_auth.FirebaseAuthException exception) verificationFailed,
+      Function(Exception exception) verificationFailed,
       Function(String phone, String verificationId, int? forceResendingToken) codeSent,
       Function(String verificationId) codeAutoRetrievalTimeout
   ) async {
+    if (!(await checkConnection())) {
+      verificationFailed(ConnectionError());
+          (String code, String verificationId, Function(dynamic exception) codeVerificationFailed) => _codeAttempt(phone, code, verificationId, verificationCompleted, codeVerificationFailed);
+    }
     _firebaseAuth.verifyPhoneNumber(
         phoneNumber: phone,
         verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {

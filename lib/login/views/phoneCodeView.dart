@@ -22,14 +22,13 @@ class PhoneCodeView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: StatusText(
-            child: Text({
+            texts: {
               CodeValidStatus.initial: "Enter the code you received",
               CodeValidStatus.valid: "",
               CodeValidStatus.invalid: "Invalid code (or internal error)",
               CodeValidStatus.verified: "Alright, you're good to go!"
-            }[loginCubit.state.codeValidStatus]!,
-              key: ValueKey<CodeValidStatus>(loginCubit.state.codeValidStatus),
-            ),
+            },
+            current: loginCubit.state.codeValidStatus,
           ),
         ),
         SizedBox(height: 10,),

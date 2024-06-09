@@ -26,13 +26,12 @@ class PhoneLoginView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: StatusText(
-            child: Text({
+            texts: {
               PhoneValidStatus.initial: "Enter your phone number",
               PhoneValidStatus.valid: "",
               PhoneValidStatus.invalid: "Invalid phone number"
-            }[loginCubit.state.phoneValidStatus]!,
-              key: ValueKey<PhoneValidStatus>(loginCubit.state.phoneValidStatus),
-            ),
+            },
+            current: loginCubit.state.phoneValidStatus,
           ),
         ),
         SizedBox(height: 10,),

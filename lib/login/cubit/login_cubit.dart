@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vent/app/app.dart';
+import 'package:vent/src/config.dart';
 import 'package:vent/src/repository/authService.dart';
 import 'package:vent/src/repository/repository.dart';
 
@@ -23,12 +25,16 @@ class LoginCubit extends Cubit<LoginState> {
     authCodeSubmit = await _authService.logInWithPhone(
         (await ContactService.get_e164(_phone)) ?? _phone,
       () {
-        emit(state.copyWith(codeValidStatus: CodeValidStatus.verified));
+        emit(state.copyWith(codeValidStatus: CodeValidStatus.verified, isLoading: false));
         log("Successful login");
         ventRouter.go("/");
       },
       (exception) {
-        Fluttertoast.showToast(msg: "Could not login");
+        if (exception is ConnectionError) {
+          Fluttertoast.showToast(msg: "Check your connection");
+        } else {
+          Fluttertoast.showToast(msg: "Could not login");
+        }
         log("Phone login failed: $exception");
         emit(LoginState.phone());
       },
@@ -39,12 +45,12 @@ class LoginCubit extends Cubit<LoginState> {
       },
       (verificationId) {
         _verificationId = verificationId;
-        Fluttertoast.showToast(msg: "Auto verification timed out");
       }
     );
   }
 
   void codeSubmit() {
+    emit(state.copyWith(isLoading: true));
     authCodeSubmit(_code, _verificationId, (exception) {
       log("Code verification failed: $exception");
       emit(state.copyWith(codeValidStatus: CodeValidStatus.invalid));
@@ -53,10 +59,9 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void validatePhoneText(String phone) {
-    RegExp phoneRegex = RegExp(r'^\+[1-9]{1}[0-9]{3,14}$');
     if (phone == "") {
       emit(state.copyWith(phoneValidStatus: PhoneValidStatus.initial));
-    } else if (phoneRegex.hasMatch(phone)) {
+    } else if (VentConfig.phoneRegex.hasMatch(phone)) {
       _phone = phone;
       emit(state.copyWith(phoneValidStatus: PhoneValidStatus.valid));
     } else {
@@ -68,7 +73,7 @@ class LoginCubit extends Cubit<LoginState> {
     if (state.codeValidStatus == CodeValidStatus.invalid) {
       emit(state.copyWith(codeValidStatus: CodeValidStatus.valid));
     }
-    if (code == "" || code.length != 6) {
+    if (code == "" || !VentConfig.codeRegex.hasMatch(code)) {
       emit(state.copyWith(codeValidStatus: CodeValidStatus.initial));
     } else {
       _code = code;

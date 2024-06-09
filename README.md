@@ -13,11 +13,15 @@ The server repo can be found [here](https://github.com/RedMiner2005/vent-crux-ba
 - [x] Set up Flutter Bloc
 - [x] Create a login system based on phone number
 - [ ] Onboarding screen
-- [ ] Create the home page (text input + voice input)
-- [ ] ~~Fine tune the Phi-3-mini-4k-instruct model and run it locally using llama.cpp~~
+- [x] Create the home page (text input + voice input) (Rough)
 - [x] Set up a server to manage requests to a llama-3-8b model with a predetermined set of system instructions and example prompts, using the Groq platform (vent-crux-backend)
-- [ ] Deploy vosk on device
-- [ ] Obtain contact list and filter based on registered users
-- [ ] Contact picker screen
-- [ ] Send messages to the user, 'Received' screen
+- [ ] ~~Deploy vosk on device~~
+- [x] Obtain contact list and filter based on registered users
+- [x] Contact picker screen (Rough)
+- [x] Send messages to the user, 'Received' screen (Rough)
 - [x] Receive notifications
+
+## Brownie Points
+- [x] Automatic contact inference : Works well, except sometimes 'he', 'she' are recognized as contacts
+- [x] Entire contact list does not leave the phone: However, the presence of documents with SHA 256 hash of the number as ID is checked on Firestore
+- [ ] Indicator that reacts to loudness when a user's voice is being recorded

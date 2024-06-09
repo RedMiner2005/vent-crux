@@ -17,11 +17,10 @@ class NotificationsButton extends StatelessWidget {
           final button = IconButton(
             icon: Icon(
               (unread.data == 0 || unread.data == null) ? Icons.notifications_none_rounded : Icons.notifications_rounded,
-              color: Colors.white,
             ),
             onPressed: () {
               pageController.nextPage(
-                duration: VentConfig.ANIMATION_PAGE_SWIPE_DURATION,
+                duration: VentConfig.animationPageSwipeDuration,
                 curve: Curves.easeOut,
               );
             },

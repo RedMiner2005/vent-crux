@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/login/cubit/login_cubit.dart';
+import 'package:vent/src/config.dart';
 
 class LoginSubmitButton extends StatelessWidget {
   const LoginSubmitButton({super.key, required this.loginCubit});
@@ -10,14 +13,14 @@ class LoginSubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late IconData icon;
+    late IconData? icon;
     late String text;
     late bool isEnabled;
     late dynamic onPressed;
     if(loginCubit.state.isLoading || loginCubit.state.status == LoginStatus.loading) {
       isEnabled = false;
       text = "Loading";
-      icon = Icons.access_time_rounded;
+      icon = null;
       onPressed = () {};
     } else if (loginCubit.state.status == LoginStatus.phone) {
       isEnabled = loginCubit.state.phoneValidStatus == PhoneValidStatus.valid;
@@ -43,15 +46,20 @@ class LoginSubmitButton extends StatelessWidget {
     } else {
       isEnabled = false;
       text = "Loading";
-      icon = Icons.access_time_rounded;
+      icon = null;
       onPressed = () {};
     }
+    Widget iconWidget = (icon == null) ? SpinKitPulse(
+      size: 20.0,
+      color: (Theme.of(context).brightness == Brightness.light) ? Colors.black38 : Colors.white38,
+      key: ValueKey<IconData?>(icon),
+    ) : Icon(icon);
     return FloatingActionButton.extended(
       onPressed: (isEnabled) ? onPressed : null,
       backgroundColor: (isEnabled) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
       foregroundColor: (isEnabled) ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
-      icon: Text(text),
-      label: Icon(icon),
+      icon: Text(text, key: ValueKey<String>(text),),
+      label: iconWidget,
       elevation: 4.0,
       disabledElevation: 0.0,
     );

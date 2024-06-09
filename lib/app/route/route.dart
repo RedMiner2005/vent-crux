@@ -11,6 +11,7 @@ import 'package:vent/src/models/models.dart';
 import 'package:vent/src/repository/repository.dart';
 
 final ventRouter = GoRouter(
+  initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/',
@@ -37,15 +38,15 @@ final ventRouter = GoRouter(
       //   },
       // ),
       builder: (context, state) => HomeView(),
-      redirect: (context, state) {
-        if (context.read<AppBloc>().state.status == AppStatus.unauthenticated)
-          return '/login';
-        return null;
-      }
     ),
     GoRoute(
       path: '/login',
       builder: (context, state) => LoginView(),
+        redirect: (context, state) {
+          if (context.read<AppBloc>().state.status == AppStatus.authenticated)
+            return '/';
+          return null;
+        }
     ),
     GoRoute(
       path: '/contactDialog',

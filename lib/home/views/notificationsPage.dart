@@ -37,7 +37,7 @@ class _HomePageState extends State<NotificationsPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             widget.pageController.previousPage(
-              duration: VentConfig.ANIMATION_PAGE_SWIPE_DURATION,
+              duration: VentConfig.animationPageSwipeDuration,
               curve: Curves.easeOut,
             );
           },
@@ -74,9 +74,9 @@ class _HomePageState extends State<NotificationsPage> {
               }
               return AnimationConfiguration.staggeredList(
                 position: index,
-                duration: Duration(milliseconds: VentConfig.ANIMATION_DURATION.inMilliseconds~/2),
+                duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
                 child: SlideAnimation(
-                  verticalOffset: VentConfig.ANIMATION_SLIDE_OFFSET,
+                  verticalOffset: VentConfig.animationSlideOffset,
                   child: FadeInAnimation(
                     child: ListTile(
                       key: ValueKey<String>(message + formattedDateTime),
@@ -91,7 +91,7 @@ class _HomePageState extends State<NotificationsPage> {
             separatorBuilder: (context, index) {
               return AnimationConfiguration.staggeredList(
                 position: 2 * index + 1,
-                duration: Duration(milliseconds: VentConfig.ANIMATION_DURATION.inMilliseconds~/2),
+                duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
                 child: FadeInAnimation(
                   child: const Divider(
                     thickness: 1,

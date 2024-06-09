@@ -28,7 +28,7 @@ final class LoginState extends Equatable {
 
 
   @override
-  List<Object?> get props => [status, phoneValidStatus, codeValidStatus];
+  List<Object?> get props => [status, phoneValidStatus, codeValidStatus, isLoading];
 
   final LoginStatus status;
   final PhoneValidStatus phoneValidStatus;

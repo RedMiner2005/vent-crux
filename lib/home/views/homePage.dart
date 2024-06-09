@@ -58,7 +58,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Center(
           child: Column(
             children: [
@@ -69,7 +70,6 @@ class _HomePageState extends State<HomePage> {
                   focusNode: widget.focusNode,
                 ),
               ),
-              Spacer(),
               VoiceButton(voiceService: _voiceService, controller: widget.textController),
               ElevatedButton(
                   onPressed: () async {
@@ -100,7 +100,6 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Text("Process")
               ),
-              Spacer()
             ],
           ),
         ),
