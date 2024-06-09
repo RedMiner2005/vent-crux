@@ -24,8 +24,6 @@ class _HomeViewState extends State<HomeView> {
   late PageController pageController;
   late FocusNode focusNode;
   late VoiceService _voiceService;
-  bool isRecording = false;
-  int _page = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -35,28 +33,26 @@ class _HomeViewState extends State<HomeView> {
     final _contactService = context.read<ContactService>();
     return BlocProvider(
       create: (context) => HomeCubit(
-          backendService: _backendService,
-          voiceService: _voiceService,
-          contactService: _contactService,
-          controller: textController
+        authService: _authService,
+        backendService: _backendService,
+        voiceService: _voiceService,
+        contactService: _contactService,
+        controller: textController,
       ),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           final cubit = context.read<HomeCubit>();
-          return PageView(
-            children: [
-              HomePage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,),
-              NotificationsPage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,),
-            ],
-            scrollDirection: Axis.horizontal,
-            physics: BouncingScrollPhysics(),
-            controller: pageController,
-            onPageChanged: (num) => setState(() {
-              if(_page == 1 && num == 0) {
-                _authService.clearUnread();
-              }
-              _page = num;
-            }),
+          return Scaffold(
+            body: PageView(
+              children: [
+                HomePage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController),
+                NotificationsPage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,),
+              ],
+              scrollDirection: Axis.horizontal,
+              physics: BouncingScrollPhysics(),
+              controller: pageController,
+              onPageChanged: cubit.onPageChanged,
+            ),
           );
         },
       ),

@@ -38,6 +38,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
                 current: (_counter % VentConfig.loadingTexts.length)
             ),
           ),
+          SizedBox(height: 8.0,),
           AnimatedBuilder(
               animation: animation,
               builder: (context, _) {

@@ -17,6 +17,7 @@ class NotificationsButton extends StatelessWidget {
           final button = IconButton(
             icon: Icon(
               (unread.data == 0 || unread.data == null) ? Icons.notifications_none_rounded : Icons.notifications_rounded,
+              size: 32,
             ),
             onPressed: () {
               pageController.nextPage(

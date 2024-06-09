@@ -12,6 +12,25 @@ class StatusText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return StatusTextRaw(
+      child: Text(
+        texts[current] ?? "",
+        softWrap: true,
+        style: style,
+        textAlign: TextAlign.center,
+        key: ValueKey(current),
+      ),
+    );
+  }
+}
+
+class StatusTextRaw extends StatelessWidget {
+  const StatusTextRaw({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return AnimatedSwitcher(
       duration: VentConfig.animationStatusText,
       switchInCurve: Curves.easeOut,
@@ -32,13 +51,7 @@ class StatusText extends StatelessWidget {
           ),
         );
       },
-      child: Text(
-        texts[current] ?? "",
-        softWrap: true,
-        style: style,
-        textAlign: TextAlign.center,
-        key: ValueKey(current),
-      ),
+      child: child,
     );
   }
 }

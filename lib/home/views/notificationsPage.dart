@@ -27,82 +27,65 @@ class _HomePageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     final authService = context.read<AuthenticationService>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: Container(),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            widget.pageController.previousPage(
-              duration: VentConfig.animationPageSwipeDuration,
-              curve: Curves.easeOut,
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      initialData: [{"LOADING": "LOADING"}],
+      stream: authService.inbox,
+      builder: (context, snapshot) {
+        if (snapshot.data?[0].containsKey("LOADING") ?? false) {
+          return LoadingWidget();
+        }
+        if (!snapshot.hasData || snapshot.data == [] || snapshot.data == null) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: Text("Nothing to see here!")),
+            ],
+          );
+        }
+        return ListView.separated(
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            final dateTime = snapshot.data![index]["time"];
+            final message = (snapshot.data![index]["message"] ?? "") as String;
+            final today = DateTime.timestamp().toLocal();
+            String formattedDateTime;
+            if (today.difference(dateTime).inDays >= 7) {
+              formattedDateTime = VentConfig.dateFormat.format(dateTime);
+            } else if (today.day != dateTime.day) {
+              formattedDateTime = VentConfig.weekdayFormat.format(dateTime);
+            } else {
+              formattedDateTime = VentConfig.timeFormat.format(dateTime);
+            }
+            return AnimationConfiguration.staggeredList(
+              position: index,
+              duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
+              child: SlideAnimation(
+                verticalOffset: VentConfig.animationSlideOffset,
+                child: FadeInAnimation(
+                  child: ListTile(
+                    key: ValueKey<String>(message + formattedDateTime),
+                    title: Text(message),
+                    subtitle: Text(formattedDateTime),
+                    trailing: ((snapshot.data![index]["unread"] ?? false) as bool) ? Badge() : null,
+                  ),
+                ),
+              ),
             );
           },
-        ),
-      ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        initialData: [{"LOADING": "LOADING"}],
-        stream: authService.inbox,
-        builder: (context, snapshot) {
-          if (snapshot.data?[0].containsKey("LOADING") ?? false) {
-            return LoadingWidget();
-          }
-          if (!snapshot.hasData || snapshot.data == [] || snapshot.data == null) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(child: Text("Nothing to see here!")),
-              ],
+          separatorBuilder: (context, index) {
+            return AnimationConfiguration.staggeredList(
+              position: 2 * index + 1,
+              duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
+              child: FadeInAnimation(
+                child: const Divider(
+                  thickness: 1,
+                  height: 20,
+                ),
+              ),
             );
-          }
-          return ListView.separated(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final dateTime = snapshot.data![index]["time"];
-              final message = (snapshot.data![index]["message"] ?? "") as String;
-              final today = DateTime.timestamp().toLocal();
-              String formattedDateTime;
-              if (today.difference(dateTime).inDays >= 7) {
-                formattedDateTime = VentConfig.dateFormat.format(dateTime);
-              } else if (today.day != dateTime.day) {
-                formattedDateTime = VentConfig.weekdayFormat.format(dateTime);
-              } else {
-                formattedDateTime = VentConfig.timeFormat.format(dateTime);
-              }
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
-                child: SlideAnimation(
-                  verticalOffset: VentConfig.animationSlideOffset,
-                  child: FadeInAnimation(
-                    child: ListTile(
-                      key: ValueKey<String>(message + formattedDateTime),
-                      title: Text(message),
-                      subtitle: Text(formattedDateTime),
-                      trailing: ((snapshot.data![index]["unread"] ?? false) as bool) ? Badge() : null,
-                    ),
-                  ),
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return AnimationConfiguration.staggeredList(
-                position: 2 * index + 1,
-                duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
-                child: FadeInAnimation(
-                  child: const Divider(
-                    thickness: 1,
-                    height: 20,
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+          },
+        );
+      },
     );
   }
 }

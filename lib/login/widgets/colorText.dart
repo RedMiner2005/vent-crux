@@ -29,7 +29,14 @@ class _ColorTextState extends State<ColorText> {
   @override
   Widget build(BuildContext context) {
     return (!isAnimationOver) ? AnimatedTextKit(
+      pause: 200.ms,
       animatedTexts: [
+        ColorizeAnimatedText(
+            "",
+            colors: [Colors.transparent, Colors.transparent],
+            textStyle: widget.style,
+            speed: 0.ms
+        ),
         ColorizeAnimatedText(
           widget.text,
           colors: [

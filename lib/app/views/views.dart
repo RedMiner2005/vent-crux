@@ -66,7 +66,7 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     Map<Brightness, ThemeData> themes = themeBuilder();
     return MaterialApp.router(
-      title: 'Vent',
+      title: VentConfig.appName,
       routerConfig: ventRouter,
       theme: themes[Brightness.light],
       darkTheme: themes[Brightness.dark],

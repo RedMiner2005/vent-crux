@@ -7,6 +7,7 @@ import 'package:vent/app/widgets/loading.dart';
 import 'package:vent/login/cubit/login_cubit.dart';
 import 'package:vent/login/login.dart';
 import 'package:vent/login/widgets/widgets.dart';
+import 'package:vent/src/config.dart';
 import 'package:vent/src/repository/authService.dart';
 
 class LoginView extends StatelessWidget {
@@ -35,12 +36,12 @@ class LoginView extends StatelessWidget {
                             "Vent",
                             style: TextStyle(
                               fontSize: 72.0,
-                              fontFamily: 'Redressed'
+                              fontFamily: VentConfig.brandingFont
                             ),
-                          ).animate().fade(delay: 200.ms)
+                          )
                       ),
                       Text("Login", style: TextStyle(fontSize: 20.0),).animate()
-                          .fade(delay: 500.ms, duration: 700.ms),
+                          .fade(delay: 700.ms, duration: 700.ms),
                       SizedBox(height: 30,),
                       Padding(
                         padding: const EdgeInsets.all(32.0),

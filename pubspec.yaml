@@ -120,8 +120,14 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   fonts:
-   - family: Redressed
-     fonts:
-       - asset: assets/fonts/Redressed-Regular.ttf
+    - family: Redressed
+      fonts:
+        - asset: assets/fonts/Redressed-Regular.ttf
+    - family: Englebert
+      fonts:
+        - asset: assets/fonts/Englebert-Regular.ttf
+    - family: MouseMemoirs
+      fonts:
+        - asset: assets/fonts/MouseMemoirs-Regular.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
