@@ -1,15 +1,7 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:vent/app/app.dart';
 import 'package:vent/login/login.dart';
-import 'package:vent/login/views/loginView.dart';
 import 'package:vent/login/widgets/loginTextFields.dart';
 import 'package:vent/login/widgets/widgets.dart';
-import 'package:vent/src/config.dart';
 
 class PhoneLoginView extends StatelessWidget {
   const PhoneLoginView({required this.loginCubit});

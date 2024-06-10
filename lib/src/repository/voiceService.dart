@@ -1,11 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:vent/src/config.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class VoiceService {

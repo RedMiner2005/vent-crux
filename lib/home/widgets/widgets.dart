@@ -4,3 +4,6 @@ export 'voiceButton.dart';
 export 'sendButton.dart';
 export 'extrasButton.dart';
 export 'homeTitle.dart';
+export 'notificationsTitle.dart';
+export 'contactsTitle.dart';
+export 'customTooltip.dart';

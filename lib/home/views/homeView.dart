@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/home/cubit/home_cubit.dart';
 import 'package:vent/home/home.dart';
@@ -13,7 +10,9 @@ import 'package:vent/src/repository/backendService.dart';
 import 'package:vent/src/repository/repository.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView();
+  const HomeView({required this.initialStatus});
+
+  final HomeStatus initialStatus;
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -37,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
         backendService: _backendService,
         voiceService: _voiceService,
         contactService: _contactService,
-        controller: textController,
+        textController: textController,
       ),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {

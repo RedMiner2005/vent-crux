@@ -1,10 +1,5 @@
-import 'dart:developer';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:vent/home/cubit/home_cubit.dart';
 
@@ -22,14 +17,11 @@ class HomeTextField extends StatefulWidget {
 }
 
 class _HomeTextFieldState extends State<HomeTextField> {
-  bool showHint = true;
-  late final void Function() updateHint;
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if(widget.textEditingController.text == "" && showHint) DefaultTextStyle(
+        if(widget.cubit.state.isFieldEmpty) DefaultTextStyle(
           softWrap: true,
           textAlign: TextAlign.left,
           style: TextStyle(
@@ -41,7 +33,7 @@ class _HomeTextFieldState extends State<HomeTextField> {
           child: AnimatedTextKit(
             repeatForever: false,
             totalRepeatCount: 1,
-            pause: (widget.cubit.state.doIntroAnimation) ?  1500.ms : 0.ms,
+            pause: (widget.cubit.state.doIntroAnimationHome) ?  1500.ms : 0.ms,
             animatedTexts: [
               TyperAnimatedText(""),
               TyperAnimatedText('Type out your vent here, or speak away.'),
@@ -62,12 +54,7 @@ class _HomeTextFieldState extends State<HomeTextField> {
                 cursorWidth: 3.0,
                 cursorRadius: Radius.circular(5.0),
                 cursorColor: VentConfig.brandingColor,
-                onChanged: (value) {
-                  setState(() {
-                    widget.textEditingController.text.replaceFirst("\n", "");
-                    showHint = value == "";
-                  });
-                },
+                onChanged: widget.cubit.onHomeFieldChanged,
                 minLines: 2,
                 maxLines: 12,
                 maxLength: 200,
@@ -76,29 +63,11 @@ class _HomeTextFieldState extends State<HomeTextField> {
                     fontSize: 32,
                     height: 1.0
                 ),
-              ).animate().fade(delay: (widget.cubit.state.doIntroAnimation) ?  1500.ms : 0.ms, duration: (widget.cubit.state.doIntroAnimation) ?  VentConfig.animationDuration : 0.ms),
+              ).animate().fade(delay: (widget.cubit.state.doIntroAnimationHome) ?  1500.ms : 0.ms, duration: (widget.cubit.state.doIntroAnimationHome) ?  VentConfig.animationDuration : 0.ms),
             ),
           ],
         )
       ],
     );
-  }
-
-  @override
-  void initState() {
-    updateHint = () {
-      setState(() {
-        widget.textEditingController.text.replaceFirst("\n", "");
-        showHint = widget.textEditingController.text == "";
-      });
-    };
-    widget.textEditingController.addListener(updateHint);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    widget.textEditingController.removeListener(updateHint);
-    super.dispose();
   }
 }

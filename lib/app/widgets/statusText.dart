@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:animations/animations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:vent/src/config.dart';
 
 class StatusText extends StatelessWidget {
-  const StatusText({super.key, required this.texts, required this.current, this.style});
+  const StatusText({super.key, required this.texts, required this.current, this.style, this.textAlign});
 
   final Map<dynamic, String> texts;
   final dynamic current;
   final TextStyle? style;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class StatusText extends StatelessWidget {
         texts[current] ?? "",
         softWrap: true,
         style: style,
-        textAlign: TextAlign.center,
+        textAlign: textAlign ?? TextAlign.center,
         key: ValueKey(current),
       ),
     );

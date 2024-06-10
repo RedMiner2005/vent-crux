@@ -83,11 +83,11 @@ class ContactService {
         (await _dataService.getContactCache())
           .map((key, value) => MapEntry(key, {"confidence": tokenSetPartialRatio(name, value), "name": value, "hash": ContactService.getPhoneHash(key), "phone": key}))
           .values.toList();
-    if (matches == []) {
-      return findMatches(null);
-    }
     matches.sort((a, b) => b["confidence"].compareTo(a["confidence"]));
     matches.removeWhere((element) => element["confidence"] < 85);
+    if (matches.isEmpty) {
+      return await findMatches(null);
+    }
     return matches;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vent/app/bloc/app_bloc.dart';
 import 'package:vent/home/cubit/home_cubit.dart';
 import 'package:vent/home/home.dart';
+import 'package:vent/home/widgets/customTooltip.dart';
 
 class ExtrasButton extends StatelessWidget {
   const ExtrasButton({super.key, required this.cubit});
@@ -18,23 +19,27 @@ class ExtrasButton extends StatelessWidget {
         color: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         clipBehavior: Clip.antiAlias,
-        child: MaterialButton(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => ExtrasDialog(
-                onLogout: () {
-                  context.read<AppBloc>().add(AppLogoutRequested());
-                },
+        child: CustomTooltip(
+          message: "More",
+          child: MaterialButton(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onPressed: () {
+              cubit.unfocus();
+              showDialog(
+                context: context,
+                builder: (context) => ExtrasDialog(
+                  onLogout: () {
+                    context.read<AppBloc>().add(AppLogoutRequested());
+                  },
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.more_horiz_rounded,
+                size: 32.0,
               ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.more_horiz_rounded,
-              size: 32.0,
             ),
           ),
         ),

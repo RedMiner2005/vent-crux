@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:rainbow_color/rainbow_color.dart';
 import 'package:vent/login/widgets/widgets.dart';
 import 'package:vent/src/config.dart';
 
@@ -32,30 +32,49 @@ class _LoadingWidgetState extends State<LoadingWidget>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 16.0),
-            child: StatusText(
-                texts: VentConfig.loadingTexts.asMap(),
-                current: (_counter % VentConfig.loadingTexts.length)
+            padding: const EdgeInsets.all(32.0),
+            child: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+              child: SizedBox(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(36.0, 0.0, 36.0, 16.0),
+                      child: SizedBox(
+                        height: 70.0,
+                        child: StatusText(
+                          texts: VentConfig.loadingTexts.asMap(),
+                          current: (_counter % VentConfig.loadingTexts.length),
+                          style: TextStyle(fontFamily: 'Englebert', fontSize: 14.0),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8.0,),
+                    AnimatedBuilder(
+                        animation: animation,
+                        builder: (context, _) {
+                          return SpinKitThreeBounce(
+                            itemBuilder: (context, index) {
+                              return DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: VentConfig.rainbowSpectrum[(2.0*index + animation.value) % VentConfig.rainbowSpectrum.rangeEnd],
+                                  shape: BoxShape.circle,
+                                ),
+                              );
+                            },
+                          );
+                        }
+                    )
+                  ],
+                ).animate().fade(),
+              ),
             ),
           ),
-          SizedBox(height: 8.0,),
-          AnimatedBuilder(
-              animation: animation,
-              builder: (context, _) {
-                return SpinKitThreeBounce(
-                  itemBuilder: (context, index) {
-                    return DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: VentConfig.rainbowSpectrum[(2.0*index + animation.value) % VentConfig.rainbowSpectrum.rangeEnd],
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  },
-                );
-              }
-          )
         ],
-      ).animate().fade(),
+      ),
     );
   }
 

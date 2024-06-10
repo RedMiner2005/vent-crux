@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:vent/src/config.dart';
 
 class ExtrasDialog extends StatelessWidget {
@@ -37,6 +38,8 @@ class ExtrasDialog extends StatelessWidget {
         ),
       ],
       actionsAlignment: MainAxisAlignment.center,
-    );
+    ).animate()
+        .fade()
+        .slideY(begin: 0.05, curve: Curves.easeOut);
   }
 }

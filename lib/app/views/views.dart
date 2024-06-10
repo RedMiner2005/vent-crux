@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vent/app/bloc/app_bloc.dart';
@@ -47,15 +46,6 @@ class App extends StatelessWidget {
         child: const AppView(),
       )
     );
-    // return RepositoryProvider.value(
-    //   value: _authService,
-    //   child: BlocProvider(
-    //     create: (_) => AppBloc(
-    //       authService: _authService,
-    //     ),
-    //     child: const AppView(),
-    //   ),
-    // );
   }
 }
 

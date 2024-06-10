@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vent/app/widgets/statusText.dart';
 import 'package:vent/home/cubit/home_cubit.dart';
 import 'package:vent/home/widgets/notificationsButton.dart';
@@ -31,18 +28,18 @@ class HomeTitle extends StatelessWidget {
               ),
             ).animate()
                 .fade(
-                  delay: (cubit.state.doIntroAnimation) ? 300.ms : 0.ms,
-                  duration: (cubit.state.doIntroAnimation) ? VentConfig.animationDuration : 0.ms
+                  delay: (cubit.state.doIntroAnimationHome) ? 300.ms : 0.ms,
+                  duration: (cubit.state.doIntroAnimationHome) ? VentConfig.animationDuration : 0.ms
                 )
                 .shimmer(
-                  delay: (cubit.state.doIntroAnimation) ? 300.ms : 0.ms,
-                  duration: (cubit.state.doIntroAnimation) ? VentConfig.animationDuration : 0.ms
+                  delay: (cubit.state.doIntroAnimationHome) ? 300.ms : 0.ms,
+                  duration: (cubit.state.doIntroAnimationHome) ? VentConfig.animationDuration : 0.ms
                 ),
             NotificationsButton(pageController: pageController)
               .animate()
               .fade(
-                delay: (cubit.state.doIntroAnimation) ? 300.ms : 0.ms,
-                duration: (cubit.state.doIntroAnimation) ? VentConfig.animationDuration : 0.ms
+                delay: (cubit.state.doIntroAnimationHome) ? 300.ms : 0.ms,
+                duration: (cubit.state.doIntroAnimationHome) ? VentConfig.animationDuration : 0.ms
               )
           ],
         ),
@@ -60,8 +57,8 @@ class HomeTitle extends StatelessWidget {
             key: ValueKey<String>(cubit.state.message),
           ),
         ).animate().fade(
-            delay: (cubit.state.doIntroAnimation) ? 900.ms : 0.ms,
-            duration: (cubit.state.doIntroAnimation) ? VentConfig.animationDuration : 0.ms
+            delay: (cubit.state.doIntroAnimationHome) ? 900.ms : 0.ms,
+            duration: (cubit.state.doIntroAnimationHome) ? VentConfig.animationDuration : 0.ms
           ),
       ],
     );

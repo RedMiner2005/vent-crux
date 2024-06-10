@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:rxdart/rxdart.dart';
@@ -36,15 +37,20 @@ class _HomePageState extends State<NotificationsPage> {
         }
         if (!snapshot.hasData || snapshot.data == [] || snapshot.data == null) {
           return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              NotificationsTitle(pageController: widget.pageController, cubit: widget.cubit),
               Center(child: Text("Nothing to see here!")),
             ],
           );
         }
         return ListView.separated(
-          itemCount: snapshot.data!.length,
+          itemCount: snapshot.data!.length + 1,
           itemBuilder: (context, index) {
+            if (index == 0)
+              return NotificationsTitle(pageController: widget.pageController, cubit: widget.cubit);
+            index -= 1;
             final dateTime = snapshot.data![index]["time"];
             final message = (snapshot.data![index]["message"] ?? "") as String;
             final today = DateTime.timestamp().toLocal();
@@ -58,28 +64,47 @@ class _HomePageState extends State<NotificationsPage> {
             }
             return AnimationConfiguration.staggeredList(
               position: index,
-              duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
+              duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/4),
               child: SlideAnimation(
                 verticalOffset: VentConfig.animationSlideOffset,
                 child: FadeInAnimation(
-                  child: ListTile(
-                    key: ValueKey<String>(message + formattedDateTime),
-                    title: Text(message),
-                    subtitle: Text(formattedDateTime),
-                    trailing: ((snapshot.data![index]["unread"] ?? false) as bool) ? Badge() : null,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+                    child: ListTile(
+                      key: ValueKey<String>(message + formattedDateTime),
+                      title: Text(
+                        message,
+                        style: TextStyle(
+                          fontFamily: 'Englebert',
+                          fontSize: 18.0
+                        ),
+                      ),
+                      subtitle: Text(formattedDateTime),
+                      trailing: ((snapshot.data![index]["unread"] ?? false) as bool) ? Badge(
+                        smallSize: 10.0,
+                      ) : null,
+                    ),
                   ),
                 ),
               ),
             );
           },
           separatorBuilder: (context, index) {
+            if (index == 0)
+              return Container();
+            index -= 1;
             return AnimationConfiguration.staggeredList(
               position: 2 * index + 1,
-              duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/2),
-              child: FadeInAnimation(
-                child: const Divider(
-                  thickness: 1,
-                  height: 20,
+              duration: Duration(milliseconds: VentConfig.animationDuration.inMilliseconds~/4),
+              child: SlideAnimation(
+                verticalOffset: VentConfig.animationSlideOffset,
+                child: FadeInAnimation(
+                  child: const Divider(
+                    thickness: 1,
+                    height: 20,
+                    indent: 10.0,
+                    endIndent: 10.0,
+                  ),
                 ),
               ),
             );

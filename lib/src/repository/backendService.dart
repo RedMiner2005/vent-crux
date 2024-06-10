@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:fluttertoast/fluttertoast.dart';
-
 import '../config.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,7 +19,7 @@ class BackendService {
     final Map result = jsonDecode(response.body);
     if (result.containsKey("error")) {
       log("Process request failed: ${result['error'] ?? 'Unknown error'}");
-      Fluttertoast.showToast(msg: "We weren't able to process your vent");
+      // Fluttertoast.showToast(msg: "We weren't able to process your vent");
       return {};
     }
     return result as Map<String, dynamic>;
@@ -37,7 +35,7 @@ class BackendService {
     final Map result = jsonDecode(response.body);
     if (result.containsKey("error")) {
       log("Send request failed: ${result['error'] ?? 'Unknown error'}");
-      Fluttertoast.showToast(msg: "Unable to send, please try again later");
+      // Fluttertoast.showToast(msg: "Unable to send, please try again later");
       return false;
     }
     return true;

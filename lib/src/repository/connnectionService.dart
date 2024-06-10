@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
-
-// Use connectivity_plus?
-
 class ConnectionError implements Exception {}
 
+enum ConnectionStatus {
+  connected,
+  disconnected
+}
 
 Future<bool> checkConnection() async {
   try {
@@ -14,7 +14,18 @@ Future<bool> checkConnection() async {
       return true;
     }
     return false;
-  } on SocketException catch (_) {
+  } catch (_) {
     return false;
+  }
+}
+
+Stream<ConnectionStatus> get connectedStream async* {
+  bool prevState = true;
+  while(true) {
+    if (prevState != await checkConnection()) {
+      prevState = !prevState;
+      yield (prevState) ? ConnectionStatus.connected : ConnectionStatus.disconnected;
+    }
+    await Future.delayed(Duration(milliseconds: (prevState) ? 2000 : 500));
   }
 }

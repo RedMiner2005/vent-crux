@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/login/cubit/login_cubit.dart';
-import 'package:vent/src/config.dart';
 
 class LoginSubmitButton extends StatelessWidget {
   const LoginSubmitButton({super.key, required this.loginCubit});

@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypto/crypto.dart';
-import 'package:flutter_cache_manager/file.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:vent/home/cubit/home_cubit.dart';
 import 'package:vent/src/repository/contactService.dart';
 import 'package:vent/src/src.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -20,7 +17,8 @@ class AuthenticationService {
   AuthenticationService({
     firebase_auth.FirebaseAuth? firebaseAuth,
     FirebaseFirestore? firestore,
-    DataService? dataService
+    DataService? dataService,
+    required this.initialHomeStatus
   })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
         _firestore = firestore ?? FirebaseFirestore.instance,
         _dataService = dataService ?? DataService(),
@@ -29,6 +27,7 @@ class AuthenticationService {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
   final DataService _dataService;
+  final HomeStatus initialHomeStatus;
   UserModel userObject;
 
   Future<bool> checkUserExists(String userId) async {

@@ -1,4 +1,4 @@
-name: vent
+name: Vent
 description: "Voice Every Nagging Thought - A project for CRUx R3, 2023-24 Sem 2."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -54,16 +54,12 @@ dependencies:
   animations: ^2.0.11
   crypto: ^3.0.3
   http:
-  vosk_flutter: ^0.3.48
-  record: ^5.0.0
-  record_android: 1.2.1
   speech_to_text: ^6.6.2
   flutter_contacts: ^1.1.8
   flutter_libphonenumber: ^2.2.3
   fuzzywuzzy: ^1.1.6
   intl: ^0.19.0
   flutter_staggered_animations: ^1.1.1
-  rxdart: ^0.27.7
 
 dev_dependencies:
   flutter_test:

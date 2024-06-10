@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart' as http;
+import 'package:vent/main.dart';
 import 'package:vent/src/src.dart';
 
 class NotificationService {
@@ -23,11 +21,11 @@ class NotificationService {
 
   @pragma('vm:entry-point')
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    await Firebase.initializeApp();
-    print("Handling a background message: ${message.messageId}");
+    log("Handling a background message: ${message.messageId}");
+    main(isFromNotification: true);
   }
 
-  Future<void> init(void Function(RemoteMessage) onTap) async {
+  Future<void> init({required void Function(RemoteMessage) onForegroundTap}) async {
     NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
@@ -43,8 +41,8 @@ class NotificationService {
         ?.createNotificationChannel(channel);
     _dataService.notificationToken = await FirebaseMessaging.instance.getToken();
     log(_dataService.notificationToken ?? "");
-    _onMessageTapped = onTap;
-    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    _onMessageTapped = onForegroundTap;
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;

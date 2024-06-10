@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vent/home/widgets/customTooltip.dart';
 import 'package:vent/src/config.dart';
 import 'package:vent/src/repository/authService.dart';
 
@@ -14,17 +15,21 @@ class NotificationsButton extends StatelessWidget {
     return StreamBuilder(
         stream: authService.unreadCount,
         builder: (context, unread) {
-          final button = IconButton(
-            icon: Icon(
-              (unread.data == 0 || unread.data == null) ? Icons.notifications_none_rounded : Icons.notifications_rounded,
-              size: 32,
+          final button = CustomTooltip(
+            message: (unread.data == 0 || unread.data == null) ? "Inbox" : "Inbox (${unread.data})",
+            preferBelow: true,
+            child: IconButton(
+              icon: Icon(
+                (unread.data == 0 || unread.data == null) ? Icons.inbox_outlined : Icons.inbox_rounded,
+                size: 32,
+              ),
+              onPressed: () {
+                pageController.nextPage(
+                  duration: VentConfig.animationPageSwipeDuration,
+                  curve: Curves.easeOut,
+                );
+              },
             ),
-            onPressed: () {
-              pageController.nextPage(
-                duration: VentConfig.animationPageSwipeDuration,
-                curve: Curves.easeOut,
-              );
-            },
           );
           return (unread.data == 0 || unread.data == null) ? button : Badge(
             offset: const Offset(2.0, 2.0),
