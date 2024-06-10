@@ -42,7 +42,7 @@ class NotificationService {
     _dataService.notificationToken = await FirebaseMessaging.instance.getToken();
     log(_dataService.notificationToken ?? "");
     _onMessageTapped = onForegroundTap;
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
