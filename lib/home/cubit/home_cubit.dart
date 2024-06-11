@@ -9,15 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/src/config.dart';
-import 'package:vent/src/repository/authService.dart';
-import 'package:vent/src/repository/contactService.dart';
 import 'package:vent/src/repository/repository.dart';
 
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit({required AuthenticationService authService, required BackendService backendService, required VoiceService voiceService, required ContactService contactService, required TextEditingController textController}) :
+  HomeCubit({required AuthenticationService authService, required NotificationService notificationService, required BackendService backendService, required VoiceService voiceService, required ContactService contactService, required TextEditingController textController}) :
         _authService = authService,
+        _notificationService = notificationService,
         _backendService = backendService,
         _voiceService = voiceService,
         _contactService = contactService,
@@ -25,6 +24,7 @@ class HomeCubit extends Cubit<HomeState> {
         super(HomeState.defaultState(authService.initialHomeStatus));
 
   final AuthenticationService _authService;
+  final NotificationService _notificationService;
   final BackendService _backendService;
   final VoiceService _voiceService;
   final ContactService _contactService;
@@ -67,10 +67,11 @@ class HomeCubit extends Cubit<HomeState> {
       print(result.toString());
       contactsMatch = await _contactService.findMatches(result["contact"]);
       return {"result": result, "matches": contactsMatch};
+    } on FormatException catch (e) {
+      _contactService.sync();
+      showMessage("Oh, something wrong on our end. Try clearing cache.", "Agh, that format issue: ${e.toString()}", newState: state.copyWith(isProcessing: false));
+      return {};
     } catch (e) {
-      if (e is FormatException) {
-        _contactService.sync();
-      }
       showMessage("Something went wrong. Try again.", "Processing issue: ${e.toString()}", newState: state.copyWith(isProcessing: false));
       return {};
     }
@@ -112,8 +113,10 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void onPageChanged(int newIndex) {
-    if(state.status == HomeStatus.notifications && newIndex == 0)
+    if(state.status == HomeStatus.notifications && newIndex == 0) {
+      _notificationService.cancelAll();
       _authService.clearUnread();
+    }
     emit(state.copyWith(status: HomeStatus.values[newIndex], doIntroAnimationHome: false, doIntroAnimationNotifications: false));
   }
 
@@ -153,8 +156,12 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> onSendButtonPressed(Function openDialog) async {
     unfocus();
     showMessage("Processing...", "Processing started.", persistent: true, newState: state.copyWith(isProcessing: true));
+    if (!(await _contactService.sync())) {
+      showMessage("Please enable contacts permission.", "Send cancelled: Contacts denied", newState: state.copyWith(isProcessing: false, persistentMessage: VentConfig.greetingSecondaryText));
+      return;
+    }
     processData = await process();
-    if (processData == {}) {
+    if (processData == {} || !processData.containsKey("result")) {
       return;
     }
     if (processData["result"]["isValid"] != true) {
@@ -174,7 +181,7 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
     if (chosenHash == null) {
-      showMessage("Ah, internal error. Sorry about that", "No return value from contacts dialog", newState: state.copyWith(isProcessing: false));
+      showMessage("Ah, internal error. Sorry about that", "No return value from contacts dialog", newState: state.copyWith(isProcessing: false, persistentMessage: VentConfig.greetingSecondaryText));
       return;
     }
     send(chosenHash);

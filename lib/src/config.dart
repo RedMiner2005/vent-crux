@@ -65,12 +65,12 @@ class VentConfig {
   static final DateFormat dateFormat = DateFormat("dd MMM yyyy");
   static final DateFormat weekdayFormat = DateFormat("EEEE");
   static final DateFormat timeFormat = DateFormat.jm();
-  static final RegExp phoneRegex = RegExp(r'^\+[1-9]{1}[0-9]{3,14}$');
+  static final RegExp phoneRegex = RegExp(r'(^\+[1-9]{1}[0-9]{3,14}$)|([0-9]{10})');
   static final RegExp codeRegex = RegExp(r'^\d{6}$');
 
   // Animations
   static const Duration animationDuration = Duration(milliseconds: 500);
-  static const Duration animationPageSwipeDuration = Duration(milliseconds: 250);
+  static const Duration animationPageSwipeDuration = Duration(milliseconds: 300);
   static const Duration animationLoadingTextDuration = Duration(seconds: 5);
   static const Duration animationStatusText = Duration(milliseconds: 400);
   static const double animationSlideOffset = 20.0;

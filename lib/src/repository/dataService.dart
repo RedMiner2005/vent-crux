@@ -58,24 +58,21 @@ class DataService {
     }
   }
 
-  Future<File?> saveContactToCache(String phone, String name, ContactStatus status) async {
+  Future<File?> saveContactsToCache(Map<String, dynamic> contacts) async {
     final key = VentConfig.registeredContactCacheKey;
-    if (status == ContactStatus.unregistered) {
-      return null;
-    }
 
     final fileInfo = await _cache.getFileFromCache(key);
-    Map<String, dynamic> content = {};
+    Map<String, dynamic> prevContent = {};
     if (fileInfo != null) {
-      content = jsonDecode(await fileInfo.file.readAsString()) as Map<String, dynamic>;
+      prevContent = jsonDecode(await fileInfo.file.readAsString()) as Map<String, dynamic>;
     }
-    content[phone] = name;
-    // content[ContactService.getPhoneHash(phone)] = name;
-    return _cache.putFile(key, Uint8List.fromList(utf8.encode(jsonEncode(content))));
+
+    await clearContactCache();
+    return _cache.putFile(key, Uint8List.fromList(utf8.encode(jsonEncode(contacts))));
   }
 
   Future<void> clearContactCache() async {
     final key = VentConfig.registeredContactCacheKey;
-    _cache.removeFile(key);
+    await _cache.removeFile(key);
   }
 }

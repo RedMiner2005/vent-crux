@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vent/app/app.dart';
 import 'package:vent/home/cubit/home_cubit.dart';
 import 'package:vent/home/home.dart';
 import 'package:vent/home/views/notificationsPage.dart';
 import 'package:vent/home/widgets/widgets.dart';
+import 'package:vent/src/config.dart';
 import 'package:vent/src/repository/authService.dart';
 import 'package:vent/src/repository/backendService.dart';
 import 'package:vent/src/repository/repository.dart';
@@ -28,11 +31,13 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     _voiceService = context.read<VoiceService>();
     final _authService = context.read<AuthenticationService>();
+    final _notificationService = context.read<NotificationService>();
     final _backendService = context.read<BackendService>();
     final _contactService = context.read<ContactService>();
     return BlocProvider(
       create: (context) => HomeCubit(
         authService: _authService,
+        notificationService: _notificationService,
         backendService: _backendService,
         voiceService: _voiceService,
         contactService: _contactService,
@@ -45,7 +50,17 @@ class _HomeViewState extends State<HomeView> {
             body: PageView(
               children: [
                 HomePage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController),
-                NotificationsPage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,),
+                BackButtonListener(
+                  onBackButtonPressed: () async {
+                    print(pageController.page);
+                    if (pageController.page?.round() == pageController.initialPage) {
+                      return Future.value(false);
+                    }
+                    pageController.previousPage(duration: VentConfig.animationDuration, curve: Curves.easeInOut);
+                    return Future.value(true);
+                  },
+                  child: NotificationsPage(cubit: cubit, textController: textController, focusNode: focusNode, pageController: pageController,)
+                ),
               ],
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),

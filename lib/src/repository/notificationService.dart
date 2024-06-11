@@ -19,6 +19,10 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
+  Future<void> cancelAll() async {
+    return flutterLocalNotificationsPlugin
+        .cancelAll();
+  }
 
   Future<void> init({required void Function(RemoteMessage) onForegroundTap}) async {
     NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
@@ -38,7 +42,7 @@ class NotificationService {
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
     _dataService.notificationToken = await FirebaseMessaging.instance.getToken();
-    print(_dataService.notificationToken ?? "");
+    // print(_dataService.notificationToken ?? "");
     _onMessageTapped = onForegroundTap;
     // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {

@@ -27,7 +27,7 @@ class NotificationsTitle extends StatelessWidget {
                 onPressed: () {
                   pageController.previousPage(
                     duration: VentConfig.animationPageSwipeDuration,
-                    curve: Curves.easeOut,
+                    curve: Curves.easeInOut,
                   );
                 },
               ),

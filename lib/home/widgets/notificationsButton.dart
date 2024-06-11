@@ -26,7 +26,7 @@ class NotificationsButton extends StatelessWidget {
               onPressed: () {
                 pageController.nextPage(
                   duration: VentConfig.animationPageSwipeDuration,
-                  curve: Curves.easeOut,
+                  curve: Curves.easeInOut,
                 );
               },
             ),

@@ -49,7 +49,7 @@ class AuthenticationService {
           .doc(user.id)
           .set({
         'createdAt': FieldValue.serverTimestamp(),
-        'phone': user.phone,
+        // 'phone': user.phone,
         'notification_token': _dataService.notificationToken,
         'inbox': [],
       });
@@ -136,7 +136,7 @@ class AuthenticationService {
         .snapshots()
         .asyncMap((event) {
           if (event.data() != null) {
-            List<Map<String, dynamic>> inboxList = (event.data()!["inbox"] as List<dynamic>).map((e) {
+            List<Map<String, dynamic>> inboxList = ((event.data()!["inbox"] ?? []) as List<dynamic>).map((e) {
               late DateTime time;
               try {
                 time = DateTime.fromMillisecondsSinceEpoch(

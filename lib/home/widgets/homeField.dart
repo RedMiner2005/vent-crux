@@ -48,6 +48,7 @@ class _HomeTextFieldState extends State<HomeTextField> {
               child: TextField(
                 controller: widget.textEditingController,
                 decoration: InputDecoration.collapsed(hintText: ""),
+                textCapitalization: TextCapitalization.sentences,
                 scrollPadding: EdgeInsets.all(20.0),
                 scrollPhysics: BouncingScrollPhysics(),
                 keyboardType: TextInputType.text,

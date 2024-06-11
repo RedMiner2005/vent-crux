@@ -58,9 +58,12 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void validatePhoneText(String phone) {
+    phone = phone.replaceAll(RegExp(r' '), "");
     if (phone == "") {
       emit(state.copyWith(phoneValidStatus: PhoneValidStatus.initial));
     } else if (VentConfig.phoneRegex.hasMatch(phone)) {
+      if(!phone.startsWith("+"))
+        phone = "+${VentConfig.defaultCountryCode}$phone";
       _phone = phone;
       emit(state.copyWith(phoneValidStatus: PhoneValidStatus.valid));
     } else {

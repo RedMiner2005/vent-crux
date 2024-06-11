@@ -30,6 +30,10 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appBloc = AppBloc(
+      authService: _authService,
+      notificationService: _notificationService,
+    );
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: _authService),
@@ -40,17 +44,28 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: _voiceService),
       ],
       child: BlocProvider(
-        create: (_) => AppBloc(
-          authService: _authService,
-        ),
-        child: const AppView(),
+        create: (_) => appBloc,
+        child: AppView(bloc: appBloc,),
       )
     );
   }
 }
 
-class AppView extends StatelessWidget {
-  const AppView({super.key});
+class AppView extends StatefulWidget {
+  const AppView({super.key, required this.bloc});
+
+  final AppBloc bloc;
+
+  @override
+  State<AppView> createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> with WidgetsBindingObserver {
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    widget.bloc.onAppLifecycleStateChange(state);
+  }
 
   @override
   Widget build(BuildContext context) {

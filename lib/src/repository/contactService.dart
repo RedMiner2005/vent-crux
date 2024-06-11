@@ -18,7 +18,7 @@ enum ContactStatus {
 class ContactService {
   ContactService({required DataService dataService}) {
     _dataService = dataService;
-    FlutterContacts.requestPermission(readonly: true);
+    // FlutterContacts.requestPermission(readonly: true);
     libPhone.init().then(
         (_) {
           FlutterContacts.addListener(() => unawaited(sync()));
@@ -60,27 +60,61 @@ class ContactService {
       .exists) ? ContactStatus.registered : ContactStatus.unregistered;
   }
 
-  Future<void> sync() async {
-    _dataService.clearContactCache();
+  Future<bool> sync() async {
+    List<String> phones = [];
+    List<String> names = [];
     if (await FlutterContacts.requestPermission(readonly: true)) {
-      (await FlutterContacts.getContacts(withProperties: true)).forEach((Contact contact) {
-        contact.phones.forEach((phone) async {
-          final status = await checkIfRegistered(phone.normalizedNumber);
-          _dataService.saveContactToCache(phone.normalizedNumber, contact.displayName, status);
-        });
-      });
+      final contacts = Map.fromEntries((await (await FlutterContacts.getContacts(withProperties: true))
+          .map((contact) => contact.phones.map((phone) async {
+            final number = (phone.number.startsWith("+")) ? phone.normalizedNumber : "+${VentConfig.defaultCountryCode}${phone.number.replaceAll('[- ()]', '')}";
+            final status = await checkIfRegistered(number);
+            if (status == ContactStatus.registered) {
+              return MapEntry(number, contact.displayName);
+            } else {
+              return null;
+            }
+          }).wait).wait)
+          .expand((element) => element)
+          .where((element) => element != null)
+          .map((e) => e!)
+          .toList());
+      // await Future.wait(contacts, (Contact contact) {
+      //   contact.phones.forEach((phone) async {
+      //     final status = await checkIfRegistered(phone.normalizedNumber);
+      //     if (status == ContactStatus.registered) {
+      //       print(phone.normalizedNumber);
+      //       phones.add(phone.normalizedNumber);
+      //       names.add(contact.displayName);
+      //       print(phones);
+      //     }
+      //   });
+      // });
+      // final contacts = Map.fromIterables(phones, names);
+      print(contacts);
+      _dataService.saveContactsToCache(contacts);
+    } else {
+      print("Contact permission denied.");
+      return false;
     }
     print("Contact cache sync completed.");
+    return true;
   }
 
   Future<List<Map<String, dynamic>>> findMatches(String? name) async {
+    Map<String, dynamic> contactCache = await _dataService.getContactCache();
+    print(contactCache);
+    if (contactCache.isEmpty) {
+      return [];
+    }
     if (name == null) {
-      return (await _dataService.getContactCache())
+      print("Null Match");
+      return contactCache
           .map((key, value) => MapEntry(key, {"confidence": 100, "name": value, "hash": ContactService.getPhoneHash(key), "phone": key}))
           .values.toList();
     }
+    print("Regular Match");
     List<Map<String, dynamic>> matches =
-        (await _dataService.getContactCache())
+        contactCache
           .map((key, value) => MapEntry(key, {"confidence": tokenSetPartialRatio(name, value), "name": value, "hash": ContactService.getPhoneHash(key), "phone": key}))
           .values.toList();
     matches.sort((a, b) => b["confidence"].compareTo(a["confidence"]));

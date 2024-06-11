@@ -24,7 +24,19 @@ class ContactDialog extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
+            if (contacts.isEmpty) Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 16.0),
+                  child: Icon(Icons.person_search_rounded, size: 72.0,),
+                )
+            ),
+            if (contacts.isEmpty) Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(48.0, 16.0, 48.0, 48.0),
+                child: Text("No contacts to send vents to. Go on, invite your friends to use this app :)", textAlign: TextAlign.center,),
+              ),
+            ),
+            if (contacts.isNotEmpty) Expanded(
               child: ListView.builder(
                 itemCount: contacts.length,
                 itemBuilder: (context, index) {
