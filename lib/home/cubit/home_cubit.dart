@@ -64,7 +64,7 @@ class HomeCubit extends Cubit<HomeState> {
         throw Exception("Server error");
       if(result.containsKey("timeout"))
         return result;
-      log(result.toString());
+      print(result.toString());
       contactsMatch = await _contactService.findMatches(result["contact"]);
       return {"result": result, "matches": contactsMatch};
     } catch (e) {
@@ -103,7 +103,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void showMessage(String userMessage, String logMessage, {bool persistent=false, bool changePersistentMessage=false, HomeState? newState}) {
-    log(logMessage);
+    print(logMessage);
     if (newState == null)
       newState = state;
     emit(newState.copyWith(isRecording: false, message: userMessage, persistentMessage: (changePersistentMessage) ? userMessage : null));
@@ -166,7 +166,7 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
     String? chosenHash;
-    log(processData["matches"].toString());
+    print(processData["matches"].toString());
     if(processData["matches"].length == 1) {
       chosenHash = processData["matches"][0]["hash"];
     } else {

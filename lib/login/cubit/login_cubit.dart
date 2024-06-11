@@ -25,7 +25,7 @@ class LoginCubit extends Cubit<LoginState> {
         (await ContactService.get_e164(_phone)) ?? _phone,
       () {
         emit(state.copyWith(codeValidStatus: CodeValidStatus.verified, isLoading: false));
-        log("Successful login");
+        print("Successful login");
         ventRouter.go("/");
       },
       (exception) {
@@ -34,7 +34,7 @@ class LoginCubit extends Cubit<LoginState> {
         } else {
           Fluttertoast.showToast(msg: "Could not login");
         }
-        log("Phone login failed: $exception");
+        print("Phone login failed: $exception");
         emit(LoginState.phone());
       },
       (phone, verificationId, forceResendingToken) {
@@ -51,8 +51,8 @@ class LoginCubit extends Cubit<LoginState> {
   void codeSubmit() {
     emit(state.copyWith(isLoading: true));
     authCodeSubmit(_code, _verificationId, (exception) {
-      log("Code verification failed: $exception");
-      emit(state.copyWith(codeValidStatus: CodeValidStatus.invalid));
+      print("Code verification failed: $exception");
+      emit(state.copyWith(codeValidStatus: CodeValidStatus.invalid, isLoading: false));
       Fluttertoast.showToast(msg: "Code verification failed");
     });
   }

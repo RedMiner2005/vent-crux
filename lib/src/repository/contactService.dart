@@ -70,7 +70,7 @@ class ContactService {
         });
       });
     }
-    log("Contact cache sync completed.");
+    print("Contact cache sync completed.");
   }
 
   Future<List<Map<String, dynamic>>> findMatches(String? name) async {

@@ -15,10 +15,10 @@ class BackendService {
         body: jsonEncode({
           "prompt": input
         }));
-    log(response.body);
+    print(response.body);
     final Map result = jsonDecode(response.body);
     if (result.containsKey("error")) {
-      log("Process request failed: ${result['error'] ?? 'Unknown error'}");
+      print("Process request failed: ${result['error'] ?? 'Unknown error'}");
       // Fluttertoast.showToast(msg: "We weren't able to process your vent");
       return {};
     }
@@ -34,7 +34,7 @@ class BackendService {
         }));
     final Map result = jsonDecode(response.body);
     if (result.containsKey("error")) {
-      log("Send request failed: ${result['error'] ?? 'Unknown error'}");
+      print("Send request failed: ${result['error'] ?? 'Unknown error'}");
       // Fluttertoast.showToast(msg: "Unable to send, please try again later");
       return false;
     }

@@ -53,7 +53,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {
     ventRouter.go("/login");
     unawaited(_authService.logOut((exception) {
-      log("Logout failed with exception: $exception");
+      print("Logout failed with exception: $exception");
       Fluttertoast.showToast(msg: "Logout failed");
     }));
   }

@@ -125,7 +125,7 @@ class AuthenticationService {
         .snapshots()
         .asyncMap((event) => (event.data()?["unreadCount"] ?? 0) as int)
         .handleError((e) {
-          log("Unread Count error: ${e.toString()}");
+          print("Unread Count error: ${e.toString()}");
           return 0;
     });
   }

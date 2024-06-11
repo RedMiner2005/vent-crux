@@ -7,7 +7,7 @@ import 'package:vent/src/src.dart';
 
 class NotificationService {
   NotificationService({required DataService? dataService}):
-          _dataService = dataService ?? DataService();
+        _dataService = dataService ?? DataService();
 
   final DataService _dataService;
   late void Function(RemoteMessage) _onMessageTapped;
@@ -17,13 +17,8 @@ class NotificationService {
     importance: Importance.max,
   );
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
-  @pragma('vm:entry-point')
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    log("Handling a background message: ${message.messageId}");
-    main(isFromNotification: true);
-  }
 
   Future<void> init({required void Function(RemoteMessage) onForegroundTap}) async {
     NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
@@ -36,11 +31,14 @@ class NotificationService {
       sound: true,
     );
     AndroidInitializationSettings('ic_stat_name');
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
     _dataService.notificationToken = await FirebaseMessaging.instance.getToken();
-    log(_dataService.notificationToken ?? "");
+    print(_dataService.notificationToken ?? "");
     _onMessageTapped = onForegroundTap;
     // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -64,6 +62,6 @@ class NotificationService {
             ));
       }
     });
-    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageTapped);
+    // FirebaseMessaging.onMessageOpenedApp.listen(_onMessageTapped);
   }
 }
