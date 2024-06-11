@@ -26,9 +26,15 @@ The web service repo can be found [here](https://github.com/RedMiner2005/vent-cr
 - [ ] Implement an indicator that reacts to the amplitude of audio while recording. I was unable to do this due to reasons I still don't understand (I somehow ended up breaking the entire gradle and Kotlin configs😂)
 
 ## Screenshots
-![](https://github.com/RedMiner2005/vent-crux/tree/master/screenshots/Login.gif)
-![](https://github.com/RedMiner2005/vent-crux/tree/master/screenshots/Voice.gif)
-![](https://github.com/RedMiner2005/vent-crux/tree/master/screenshots/ContactsDialog.gif)
+<p>
+  <img src="https://github.com/RedMiner2005/vent-crux/blob/master/screenshots/Login.gif" width="25%"/>
+  <img src="https://github.com/RedMiner2005/vent-crux/blob/master/screenshots/Voice.gif" width="25%"/>
+  <img src="https://github.com/RedMiner2005/vent-crux/blob/master/screenshots/ContactsDialog.gif" width="25%"/>
+</p>
+
+## How to run?
+* Install the release APK on Android. It connects to [vent-crux-backend.onrender.com](vent-crux-backend.onrender.com). Note that Render (the platform on which it is hosted) spins down the web service, so after inactivity, it will take some time to start up (you'll notice that through request timeouts)
+* Alternatively, clone the repository onto your device, open the project on Android Studio/VS Code with Flutter (with the right version of JDK) installed. Configure the project with a Firebase project with Phone Auth, Firestore, Analytics/Crashlytics, Firebase Messaging enabled. Add your release certificate info in key.properties (android folder) and add the SHA1 and SHA256 keys to your project.
 
 ## Remarks
 A huge thanks to CRUx BPHC for this opportunity. I really like the idea of the project, it's something simple but nice.
